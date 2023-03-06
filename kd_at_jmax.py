@@ -105,6 +105,7 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
 
 #### FUNCTIONS: EIGHT-STATE MODEL ####
 
+
 #### MAIN CALLS ####
 
 param = Params3(1, 1e-11, 1e-7, 1, 1) # Create instantiation of Params3 class
