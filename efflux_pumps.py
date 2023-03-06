@@ -7,9 +7,10 @@ bacterial efflux pumps using the three- and eight-state model.
 Matthew Gerry, March 2023
 '''
 
-from parameters import *
-import rate_matrix as rm
+import numpy as np
 
+from parameters import get_derived_params
+import rate_matrix as rm
 
 #### FUNCTIONS: THREE-STATE MODEL ####
 
