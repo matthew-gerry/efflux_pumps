@@ -47,7 +47,7 @@ def efflux_analytic_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     return efflux, efflux_var
 
 
-def KM_3(param, KD, Kp, V_base, kappa):
+def KM_3(param, KD, Kp, V_base, kappa, cpp):
     ''' THE MICHAELIS-MENTEN CONSTANT CHARACTERIZING SATURATION OF THE EFFLUX FOR THE THREE-STATE MODEL '''
     
     KG = get_derived_params(param, cpp, V_base, kappa)[2]   
@@ -68,7 +68,7 @@ def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 
     Z = 1 + param.vD*param.vp*KD*Kp*KG # A partition function for states 1 and 3
     Kbeta = Kp*(1 + param.vD*KD*KG/Z) # Michaelis-Menten constants
-    KM = KM_3(param, KD, Kp, V_base, kappa)
+    KM = KM_3(param, KD, Kp, V_base, kappa, cpp)
 
     alpha = 1 - param.cDo*param.cpc/(cDc*cpp*KG) # Efficiency factor (1 in the irreversible limit)
 
@@ -80,7 +80,7 @@ def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 def efflux_MM_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     ''' EFFLUX CALCULATED FROM THE MICHAELIS-MENTEN LIKE EXPRESSION DERIVED FOR THE REVERSIBLE CASE, THREE-STATE MODEL '''
 
-    KM = KM_3(param, KD, Kp, V_base, kappa) # Michaelis-Menten constant
+    KM = KM_3(param, KD, Kp, V_base, kappa, cpp) # Michaelis-Menten constant
     S = spec_3(param, KD, Kp, V_base, kappa, cDc, cpp) # Specificity
 
     J = cDc*KM*S/(cDc + KM) # efflux
