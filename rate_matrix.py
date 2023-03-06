@@ -1,0 +1,87 @@
+'''
+rate_matrix.py
+
+Define the rate matrix for the efflux pump kinetic model (three- and eight-state).
+
+Matthew Gerry, March 2023
+'''
+
+# import numpy as np
+
+from parameters import *
+
+def rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp):
+    '''
+    RATE MATRIX FOR THE EFFLUX PUMP, THREE-STATE KINETIC MODEL
+    
+    CALLS A Params3 OBJECT AS DEFINED IN params.py
+    '''
+
+    # Electric potential Boltzmann factor
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+
+    # Forward rate constants
+    kD = param.r0*param.vD # Drug binding
+    kp = param.r0*param.vp # Proton binding
+    kt = param.r0*param.vD*param.vp*KD*Kp*KG/(1 + param.vD*param.vp*KD*Kp*KG)
+
+    R = np.zeros([3,3]) # Initialize rate matrix
+    # Insert transition rates
+    R[0,1] = kD*KD; R[0,2] = kt
+    R[1,0] = kD*cDc; R[1,2] = kp*Kp
+    R[2,0] = kt*param.cDo*param.cpc/(KD*Kp*KG); R[2,1] = kp*cpp
+
+    # Get diagonal elements from normalization condition
+    for i in range(3):
+        R[i,i] = -sum(R)[i]
+
+    return R
+
+
+def rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
+    '''
+    RATE MATRIX FOR THE EIGHT-STATE KINETIC MODEL
+
+    CALLS A Params8 OBJECT AS DEFINED IN params.py
+    '''
+    
+    # Electric potential Boltzmann factor
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+
+    ### FORWARD RATE CONSTANTS ###
+    # Forward rate constants, cycle A (one drug, one proton)
+    kDA = param.r0*param.vD_list[0] # Drug binding, cycle A
+    kpA = param.r0*param.vp_list[0] # Proton binding, cycle A
+    ktA = param.r0*param.vD_list[0]*param.vp_list[0]*Kp_list[0]*KD_list[0]*KG/(1 + param.vD_list[0]*param.vp_list[0]*Kp_list[0]*KD_list[0]*KG) # Rotation, cycle A
+
+    # Forward rate constants, cycle B (one drug, two protons)
+    kpB1 = param.r0*param.vp_list[1] # Proton binding (first), cycle B
+    ktB1 = param.r0*param.vD_list[1]*param.vp_list[1]*Kp_list[1]*KD_list[1]*KG/(1 + param.vD_list[1]*param.vp_list[1]*Kp_list[1]*KD_list[1]*KG) # Rotation (first), cycle B
+    kDB = param.r0*param.vD_list[1] # Drug binding, cycle B
+    kpB2 = param.r0*param.vp_list[2] # Proton binding (second), cycle B
+    ktB2 = param.r0*param.vp_list[2]*Kp_list[2]*KG/(1 + param.vp_list[2]*Kp_list[2]*KG) # Rotation (first), cycle B
+
+    # Forward rate constants, cycle B (zero drugs, one proton)
+    kpC = param.r0*param.vp_list[3] # Proton binding, cycle C
+    ktC = param.r0*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
+
+    ### RATE MATRIX ###
+    R = np.zeros([8,8]) # Initialize rate matrix
+    # Insert nonzero transition rates to off-diagonal elements
+    R[0,1] = kDA*KD_list[0]; R[0,2] = ktA; R[0,3] = kpB1*Kp_list[1]; R[0,7] = ktB2
+    R[1,0] = kDA*cDc; R[1,2] = kpA*Kp_list[0]
+    R[2,0] = ktA*param.cDo*param.cpc/(KD_list[0]*Kp_list[0]*KG); R[2,1] = kpA*cpp
+
+    R[3,0] = kpB1*cpp; R[3,4] = ktB1*param.cDo*param.cpc/(KD_list[1]*Kp_list[1]*KG)
+
+    R[4,3] = ktB1; R[4,5] = kpC*Kp_list[3] + ktC; R[4,6] = kDB*KD_list[1]
+    R[5,4] = kpC*cpp + ktC*param.cpc/(Kp_list[3]*KG)
+
+    R[6,4] = kDB*cDc; R[6,7] = kpB2*Kp_list[2]
+    R[7,6] = kpB2*cpp; R[7,0] = ktB2*param.cpc/(Kp_list[2]*KG)
+    
+    # Get diagonal elements from normalization condition
+    for i in range(8):
+        R[i,i] = -sum(R)[i]
+
+    return R
