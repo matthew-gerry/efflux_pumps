@@ -37,6 +37,26 @@ def rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 
     return R
 
+def cgf_3(R, dchi, chisteps):
+    ''' CUMULANT GENERATING FUNCTION, GIVEN A RATE MATRIX AND PARAMETERS DESCRIBING THE CHI AXIS '''
+
+    # chisteps - number of steps along the chi axis from zero to the max value
+    # Define the chi axis such that it is symmetric about zero
+    chiplus = np.linspace(0,dchi*chisteps,chisteps+1)
+    chi_axis = np.concatenate([-np.flip(chiplus)[:-1],chiplus])
+
+    CGF = np.zeros(len(chi_axis)) # Allocate list to hold CGF values
+    for i,chi in enumerate(chi_axis):
+        R_chi = R
+        R_chi[0,2] = R[0,2]*np.exp(complex(0,chi)) # Dress the generator with a counting field
+        R_chi[2,0] = R[2,0]*np.exp(complex(0,-chi)) # Vanishes with the irreversibility assumption
+
+       # The CGF is the eigenvalue whose real part approaches zero as chi -> 0
+        eig_chi = np.linalg.eig(R_chi)[0]
+        CGF[i] = eig_chi[eig_chi.real==max(eig_chi.real)]
+
+    return CGF
+
 
 def rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
     '''
@@ -85,3 +105,26 @@ def rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
         R[i,i] = -sum(R)[i]
 
     return R
+
+def cgf_8(R, dchi, chisteps):
+    ''' CUMULANT GENERATING FUNCTION FOR THE EIGHT-STATE MODEL, GIVEN A RATE MATRIX AND PARAMETERS DESCRIBING THE CHI AXIS '''
+
+    # chisteps - number of steps along the chi axis from zero to the max value
+    # Define the chi axis such that it is symmetric about zero
+    chiplus = np.linspace(0,dchi*chisteps,chisteps+1)
+    chi_axis = np.concatenate([-np.flip(chiplus)[:-1],chiplus])
+
+    CGF = np.zeros(len(chi_axis)) # Allocate list to hold CGF values
+    for i,chi in enumerate(chi_axis):
+        R_chi = R
+        R_chi[0,2] = R[0,2]*np.exp(complex(0,chi)) # Dress the generator with a counting field
+        R_chi[2,0] = R[2,0]*np.exp(complex(0,-chi)) # Vanishes with the irreversibility assumption
+        R_chi[4,3] = R[4,3]*np.exp(complex(0,chi))
+        R_chi[3,4] = R[3,4]*np.exp(complex(0,-chi))
+
+
+       # The CGF is the eigenvalue whose real part approaches zero as chi -> 0
+        eig_chi = np.linalg.eig(R_chi)[0]
+        CGF[i] = eig_chi[eig_chi.real==max(eig_chi.real)]
+
+    return CGF
