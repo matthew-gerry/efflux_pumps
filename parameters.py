@@ -10,9 +10,13 @@ Matthew Gerry, March 2023
 import numpy as np
 
 #### PHYSICAL CONSTANTS ####
+
 kB = 1.38065e-23 # J/K, Boltzmann constant
 T = 295 # K, temperature
 q = 1.602e-19 # C, proton charge
+
+
+#### CLASS DEFINITION ####
 
 class Parameters:
     ''' PARAMETERS FOR THE EFFLUX PUMP MODELS '''
@@ -44,6 +48,9 @@ class Params8(Parameters):
         Parameters.__init__(self, r0, cDo, cpc)
         self.vD_list = vD_list # 1/M, drug interaction volume (list of two values)
         self.vp_list = vp_list # 1/M, proton interaction volume (list of four values)
+
+
+#### DERIVED PARAMETERS ####
 
 def get_derived_params(param, cpp, V_base, kappa):
     ''' 
