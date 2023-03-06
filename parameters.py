@@ -1,5 +1,5 @@
 '''
-pump_params.py
+parameters.py
 
 Define the parameters for the three- and eight-state models of bacterial efflux pumps.
 Include only the parameters that remain constant between different plots (interaction volumes, r0, etc.).
