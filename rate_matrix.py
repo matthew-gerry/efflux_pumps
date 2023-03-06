@@ -6,9 +6,10 @@ Define the rate matrix for the efflux pump kinetic model (three- and eight-state
 Matthew Gerry, March 2023
 '''
 
-# import numpy as np
-
 from parameters import *
+
+
+#### FUNCTIONS: THREE-STATE MODEL ####
 
 def rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     '''
@@ -57,6 +58,8 @@ def cgf_3(R, dchi, chisteps):
 
     return CGF
 
+
+#### FUNCTIONS: EIGHT-STATE MODEL ####
 
 def rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
     '''
@@ -128,3 +131,16 @@ def cgf_8(R, dchi, chisteps):
         CGF[i] = eig_chi[eig_chi.real==max(eig_chi.real)]
 
     return CGF
+
+
+#### FUNCTIONS: GENERAL ####
+
+def steady_state(R):
+    ''' GIVEN A STOCHASTIC RATE MATRIX, COMPUTES THE STEADY STATE POPULATIONS '''
+    # Will output garbage if the input is not a valid rate matrix
+
+    eigvals_vecs = np.linalg.eig(R)
+    SS_unnormalized = eigvals_vecs[1][:,np.real(eigvals_vecs[0])==max(np.real(eigvals_vecs[0]))]
+    SS = np.real(SS_unnormalized)/sum(np.real(SS_unnormalized)) # Normalize
+
+    return SS
