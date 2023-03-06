@@ -14,19 +14,26 @@ import rate_matrix as rm
 
 #### FUNCTIONS: THREE-STATE MODEL ####
 
-def efflux_numerical_3(param, KD, Kp, V_base, kappa, cDc, cpp, dchi):
-    ''' GET MEAN EFFLUX RATE AND VARIANCE BY NUMERICALLY DIFFERENTIATING THE CGF, 3-STATE MODEL '''
+def efflux_numerical_3(param, KD, Kp, V_base, kappa, cDc, cpp):
+    ''' GET MEAN EFFLUX RATE BY SOLVING FOR THE STEADY-STATE NUMERICALLY, 3-STATE MODEL '''
     R = rm.rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp)
 
     # Find steady state solution as eigenvector of R associated with the zero eigenvalue
     SS = rm.steady_state(R)
     efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
 
+    return efflux
+
+
+def var_numerical_3(param, KD, Kp, V_base, kappa, cDc, cpp, dchi):
+    ''' GET VARIANCE IN EFFLUX BY NUMERICALLY DIFFERENTIATING THE CGF, 3-STATE MODEL '''
+    R = rm.rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp)
+    
     # Do full counting statistics for the variance
     CGF = rm.cgf_3(R, dchi, 1) # Set chisteps to 1 since we just need the variance
     efflux_var = -np.diff(CGF, n=2)/(dchi**2) # Variance at steady state is given by the second derivative of the CGF wrt j*chi
 
-    return efflux, efflux_var
+    return efflux_var
 
 
 def efflux_analytic_3(param, KD, Kp, V_base, kappa, cDc, cpp):
@@ -108,7 +115,7 @@ def entropy_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 
 #### FUNCTIONS: EIGHT-STATE MODEL ####
 
-def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
+def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
     ''' GET MEAN EFFLUX RATE AND VARIANCE BY NUMERICALLY DIFFERENTIATING THE CGF, 8-STATE MODEL '''
     
     R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
@@ -117,11 +124,19 @@ def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
     SS = rm.steady_state(R)
     efflux = SS[2]*R[0,2] - SS[0]*R[2,0] + SS[3]*R[4,3] - SS[4]*R[3,4] # Efflux at steady state
 
+    return efflux
+
+
+def var_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
+    ''' GET MEAN EFFLUX RATE AND VARIANCE BY NUMERICALLY DIFFERENTIATING THE CGF, 8-STATE MODEL '''
+
+    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
+
     # Do full counting statistics for the variance
     CGF = rm.cgf_8(R, dchi, 1) # Set chisteps to 1 since we just need the variance
     efflux_var = -np.diff(CGF, n=2)/(dchi**2) # Variance at steady state is given by the second derivative of the CGF wrt j*chi
 
-    return efflux, efflux_var
+    return efflux_var
 
 
 def entropy_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
