@@ -88,6 +88,23 @@ def efflux_MM_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     return J
 
 
+def entropy_3(param, KD, Kp, V_base, kappa, cDc, cpp):
+    ''' ENTROPY PRODUCTION RATE OF THE THREE-STATE MODEL '''
+
+    R = rm.rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp)
+    SS = rm.steady_state(R)
+    SS = SS.reshape(3) # Flatten the steady state probability distribution
+
+    # Entropy production is a sum over force-flux contributions derived from the rate matrix
+    force = np.log(np.divide(R,np.transpose(R)))
+    flux = np.multiply(R, np.array(3*[SS]))
+
+    entropy_contributions = np.multiply(force, flux) # In units of kB
+    EPR = entropy_contributions.sum() # Sum over all contributions
+
+    return EPR
+
+
 #### FUNCTIONS: EIGHT-STATE MODEL ####
 
 def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
@@ -104,3 +121,20 @@ def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
     efflux_var = -np.diff(CGF, n=2)/(dchi**2) # Variance at steady state is given by the second derivative of the CGF wrt j*chi
 
     return efflux, efflux_var
+
+
+def entropy_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
+    ''' ENTROPY PRODUCTION RATE OF THE THREE-STATE MODEL '''
+
+    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
+    SS = rm.steady_state(R)
+    SS = SS.reshape(8) # Flatten the steady state probability distribution
+
+    # Entropy production is a sum over force-flux contributions derived from the rate matrix
+    force = np.log(np.divide(R,np.transpose(R)))
+    flux = np.multiply(R, np.array(8*[SS]))
+
+    entropy_contributions = np.multiply(force, flux) # In units of kB
+    EPR = entropy_contributions.sum() # Sum over all contributions
+
+    return EPR
