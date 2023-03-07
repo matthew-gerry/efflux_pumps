@@ -116,7 +116,7 @@ def entropy_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 #### FUNCTIONS: EIGHT-STATE MODEL ####
 
 def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
-    ''' GET MEAN EFFLUX RATE AND VARIANCE BY NUMERICALLY DIFFERENTIATING THE CGF, 8-STATE MODEL '''
+    ''' GET MEAN EFFLUX RATE BY NUMERICALLY SOLVING FOR THE STEADY STATE, 8-STATE MODEL '''
     
     R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
 
@@ -128,7 +128,7 @@ def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
 
 
 def var_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
-    ''' GET MEAN EFFLUX RATE AND VARIANCE BY NUMERICALLY DIFFERENTIATING THE CGF, 8-STATE MODEL '''
+    ''' GET VARIANCE IN THE EFFLUX BY NUMERICALLY DIFFERENTIATING THE CGF, 8-STATE MODEL '''
 
     R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
 
@@ -137,6 +137,23 @@ def var_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
     efflux_var = -np.diff(CGF, n=2)/(dchi**2) # Variance at steady state is given by the second derivative of the CGF wrt j*chi
 
     return efflux_var
+
+
+def p_flux_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
+    ''' GET PROTON FLUX RATE THROUGH A METHOD SIMILAR TO efflux_numerical_8 '''
+
+    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
+
+    # Additional quantities needed
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+    ktC = param.r0*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
+
+    # Find steady state solution as eigenvector of R
+    SS = rm.steady_state(R)
+    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] + SS[3]*R[4,3] - SS[4]*R[3,4] # Efflux at steady state
+    p_flux = efflux + SS[7]*R[0,7] - SS[0]*R[7,0] + SS[5]*ktC - SS[4]*ktC*param.cpc/(Kp_list[3]*KG)
+
+    return p_flux
 
 
 def entropy_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
