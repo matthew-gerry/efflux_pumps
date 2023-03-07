@@ -163,15 +163,12 @@ cDo = 1e-11 # M
 cpc = 1e-7 # M
 
 
-cDc = 1e-5 # M, cytoplasmic drug concentration
-
-# Axes and values for computations, plotting
-
-# For all functions
+# Variables - for all functions
 Kp = 1e-6 # M, proton binding affinity
 V_base = -0.15 # V, base voltage (except plot_specificity)
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 KD = 1e-6 # M, drug binding affininty (except plot_efflux_vs_KD)
+cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
 KD_axis = np.logspace(-7, 0.5, 200) # M, drug binding affinity
