@@ -18,7 +18,30 @@ from parameters import *
 import efflux_pumps as pump
 
 
-#### FUNCTIONS ####
+#### FUNCTIONS: CALCULATIONS ####
+
+def get_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals):
+    ''' GET A LIST OF LISTS HOLDING EFFLUX VS DRUG CONCENTRATION VALUES FOR VARIOUS PROTON CONCENTRATIONS '''
+
+    efflux_vals = []
+
+    # Evaluate mean efflux at each value of cpp and [D]
+    for i in range(len(cpp_vals)):
+        cpp = cpp_vals[i]
+
+        efflux_at_fixed_cpp = []
+        for j in range(len(cDc_axis)):
+            cDc = cDc_axis[j]
+
+            efflux_output = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
+            efflux_at_fixed_cpp.append(efflux_output)
+
+        efflux_vals.append(efflux_at_fixed_cpp)
+    
+    return efflux_vals
+
+
+#### FUNCTIONS: PLOTTING ####
 
 # Get values in units 9 orders of magnitude smaller
 nanofy = lambda a : [1e9*x for x in a]
@@ -39,16 +62,38 @@ def plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals
 
             efflux_vals[i] = efflux_vals[i] + [efflux_output]
         
-    
     # Plot mean values and variances side by side
     KD_axis_uM = 1e6*KD_axis # KD_axis in uM
     cpp_vals_uM = [1e6*x for x in cpp_vals]
-    mean_efflux_nano = [nanofy(y) for y in efflux_vals] 
+    efflux_vals_nano = [nanofy(y) for y in efflux_vals] 
     for i in range(len(cpp_vals)):
-        plt.semilogx(KD_axis_uM, mean_efflux_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+        plt.semilogx(KD_axis_uM, efflux_vals_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
     plt.legend()
+    plt.show()
+
+
+def plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals):
+    ''' PLOT EFFLUX AS A FUNCTION OF DRUG CONCENTRATION AT VARIOUS VALUES OF PROTON CONCENTRATION '''
+
+    efflux_vals = get_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
+
+    cDc_axis_uM = 1e6*cDc_axis # KD_axis in uM - this works because cDc_axis is a numpy array
+    cpp_vals_uM = [1e6*x for x in cpp_vals]
+    efflux_vals_nano = [nanofy(y) for y in efflux_vals]
+
+    fig, ax = plt.subplots()
+    for i in range(len(cpp_vals)):
+        ax.plot(cDc_axis_uM, efflux_vals_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    
+    ax.annotate("Increasing pH",xy=(0.05,0.002),xytext=(0.05,0.024),
+                horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
+    # ax.set_xlim([0, 40])
+    # ax.set_ylim([0,0.062])
+    ax.set_xlabel("$[D]\:(\mu M)$")
+    ax.set_ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
+    ax.legend()
     plt.show()
 
 
@@ -73,9 +118,13 @@ cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
 KD_axis = np.logspace(-5,-1, 100)
 
+# For plot_efflux_vs_D
+KD_list = [1e-6, 1e-6]
+cDc_axis = np.linspace(cDo,1e-7,400)
 
 #### MAIN CALLS ####
 
 param = Params8(r0, cDo, cpc, vD_list, vp_list)
 
-plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
