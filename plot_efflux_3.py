@@ -3,6 +3,9 @@ plot_efflux_3state.py
 
 Plotting functions for the three-state model of bacterial efflux pumps.
 
+When calling functions, an object of the class Params3 should be passed to as 
+argument denoted param.
+
 Matthew Gerry, March 2023
 '''
 

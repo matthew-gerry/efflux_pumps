@@ -5,7 +5,16 @@ Plotting functions for the three-state model of bacterial efflux pumps.
 
 This includes functions to numerically estimate KM and, in turn, the specificity,
 since we do not have analytic expressions for these quantities as we do for the
-three-state model.
+three-state model. 
+
+When calling functions, an object of the class Params8 should be passed to as 
+argument denoted param.
+
+NOTE: the functions in this file assume that when the drug binding affinity is varied,
+it is only that on cycle B. The drug binding affinity on cycle A is held fixed and passed
+to many functions as the argument KDA. If one wishes to vary both KD values, or instead 
+constrain the system such that the two values are always equal to one another, this file
+must be edited accordingly.
 
 Matthew Gerry, March 2023
 '''
