@@ -1,4 +1,6 @@
 '''
+kd_at_jmax.py
+
 Efflux pumps project: code to numerically approximate the value of K_D
 at which the efflux curve is peaked, for the 3-state and 8-state 
 models.
