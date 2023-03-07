@@ -40,11 +40,35 @@ def get_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals):
     
     return efflux_vals
 
+def get_KM(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
+    ''' USE NUMERICALLY CALCULATED EFFLUX VS [D] TO APPROXIMATE KM ([D] AT HALF MAX EFFLUX) '''
+
+    KM_vals = np.zeros(len(cpp_axis)) # Allocate array for KM as a function of [p]
+
+    efflux_matrix = get_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
+
+    for j in range(len(cpp_axis)): # Run down the list of cpp values, approximate KM for each
+        efflux_curve = efflux_matrix[j]
+        Jmax = efflux_curve[-1] # Efflux should grow monotonically with [D]
+        # Roughly confirm that we reach high enough [D] to approach the max efflux
+        if Jmax-efflux_curve[int(len(efflux_curve)/2)]<0.9*Jmax:
+            # Identify the position in the list of the next efflux value after half max is achieved
+            half_max_index = next(index for index, val in enumerate(efflux_curve) if val >= Jmax/2)
+            KM = cDc_axis[half_max_index] # KM is appproximated as the cytoplasmic drug concentration at this point
+            KM_vals[j] = KM
+        else:
+            print("Efflux curve is not approaching its max value. Probe higher [D] values.")
+            break
+
+    return KM_vals
+
+
 
 #### FUNCTIONS: PLOTTING ####
 
-# Get values in units 9 orders of magnitude smaller
-nanofy = lambda a : [1e9*x for x in a]
+# Get values in smaller units
+nanofy = lambda a : [1e9*x for x in a] # By 9 orders of magnitude
+microfy = lambda a : [1e6*x for x in a] # By 6 orders of magnitude
 
 def plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals):
     ''' MEAN EFFLUX AS A FUNCTION OF DRUG BINDING AFFINITY '''
@@ -97,6 +121,27 @@ def plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
     plt.show()
 
 
+def plot_KM(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
+    ''' PLOT NUMERICALLY APPROXIMATED KM VALUES AS A FUNCTION OF [p] '''
+
+    KM_vals = []
+
+    for i in range(len(KD_vals)):
+        KD_list = [KDA, KD_vals[i]]
+
+        KM_vals.append(get_KM(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_axis))
+
+    cpp_axis_uM = [1e6*x for x in cpp_axis]   
+    KM_vals_uM = [microfy(y) for y in KM_vals]
+
+    for i in range(len(KD_vals)):
+        plt.semilogx(cpp_axis_uM, KM_vals_uM[i], label="$K_D =$ "+str(round(1e6*KD_vals[i]))+" $ \mu M$", linestyle = ls_list[i])
+    plt.xlabel("$[p]\:(\mu M)$")
+    plt.ylabel("$K_M\:(\mu M)$")
+    plt.legend()
+    plt.show()
+
+
 #### GLOBAL VARIABLES ####
 
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
@@ -120,11 +165,16 @@ KD_axis = np.logspace(-5,-1, 100)
 
 # For plot_efflux_vs_D
 KD_list = [1e-6, 1e-6]
-cDc_axis = np.linspace(cDo,1e-7,400)
+cDc_axis = np.linspace(cDo,1e-7,800) # Also for plot_KM (need high resolution)
+
+# For plot_KM
+KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
+cpp_axis = np.logspace(-6.5,-5,50)
 
 #### MAIN CALLS ####
 
 param = Params8(r0, cDo, cpc, vD_list, vp_list)
 
 # plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals)
-plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
+# plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
+plot_KM(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
