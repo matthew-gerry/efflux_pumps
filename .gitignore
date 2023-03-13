@@ -1,0 +1,12 @@
+# Compiled source #
+*.exe
+*.o
+
+# Python
+__pycache__
+
+# Packages
+*.jar
+*.rar
+*.tar
+*.zip
