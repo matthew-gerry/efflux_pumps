@@ -181,7 +181,7 @@ def plot_efficiency_vs_p(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc, cpp_a
     plt.figure()
     for i in range(len(KD_vals)):
         plt.semilogx(cpp_axis_uM, efficiency[i],label="$K_{D,B} =\:"+str(int(KD_vals_uM[i]))+"\:\mu M$",linestyle=ls_list[i])
-        plt.xlabel("$[p]\:(M)$")
+        plt.xlabel("$[p]\:(\mu M)$")
         plt.ylabel("$J/J_p$")
     plt.legend()
     plt.show()
@@ -264,7 +264,7 @@ cpp_axis = np.logspace(-6.5,-5,50)
 
 # For plot_efficiency_vs_p
 KD_vals_2 = [1e-6, 5e-6, 1e-5, 5e-5]
-cpp_axis_2 = np.logspace(-9.5,-3.5)
+cpp_axis_2 = np.logspace(-7.0,-1.5)
 
 # For plot_compare_fluxes
 cpp_vals_2 = [1e-7, 1e-5]
