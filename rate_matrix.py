@@ -22,9 +22,9 @@ def rate_matrix_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     KG = get_derived_params(param, cpp, V_base, kappa)[2]
 
     # Forward rate constants
-    kD = param.r0*param.vD # Drug binding
-    kp = param.r0*param.vp # Proton binding
-    kt = param.r0*param.vD*param.vp*KD*Kp*KG/(1 + param.vD*param.vp*KD*Kp*KG)
+    kD = param.rD*param.vD # Drug binding
+    kp = param.rp*param.vp # Proton binding
+    kt = param.rt*param.vD*param.vp*KD*Kp*KG/(1 + param.vD*param.vp*KD*Kp*KG)
 
     R = np.zeros([3,3]) # Initialize rate matrix
     # Insert transition rates
@@ -73,20 +73,20 @@ def rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
 
     ### FORWARD RATE CONSTANTS ###
     # Forward rate constants, cycle A (one drug, one proton)
-    kDA = param.r0*param.vD_list[0] # Drug binding, cycle A
-    kpA = param.r0*param.vp_list[0] # Proton binding, cycle A
-    ktA = param.r0*param.vD_list[0]*param.vp_list[0]*Kp_list[0]*KD_list[0]*KG/(1 + param.vD_list[0]*param.vp_list[0]*Kp_list[0]*KD_list[0]*KG) # Rotation, cycle A
+    kDA = param.rD*param.vD_list[0] # Drug binding, cycle A
+    kpA = param.rp*param.vp_list[0] # Proton binding, cycle A
+    ktA = param.rt*param.vD_list[0]*param.vp_list[0]*Kp_list[0]*KD_list[0]*KG/(1 + param.vD_list[0]*param.vp_list[0]*Kp_list[0]*KD_list[0]*KG) # Rotation, cycle A
 
     # Forward rate constants, cycle B (one drug, two protons)
-    kpB1 = param.r0*param.vp_list[1] # Proton binding (first), cycle B
-    ktB1 = param.r0*param.vD_list[1]*param.vp_list[1]*Kp_list[1]*KD_list[1]*KG/(1 + param.vD_list[1]*param.vp_list[1]*Kp_list[1]*KD_list[1]*KG) # Rotation (first), cycle B
-    kDB = param.r0*param.vD_list[1] # Drug binding, cycle B
-    kpB2 = param.r0*param.vp_list[2] # Proton binding (second), cycle B
-    ktB2 = param.r0*param.vp_list[2]*Kp_list[2]*KG/(1 + param.vp_list[2]*Kp_list[2]*KG) # Rotation (first), cycle B
+    kpB1 = param.rp*param.vp_list[1] # Proton binding (first), cycle B
+    ktB1 = param.rt*param.vD_list[1]*param.vp_list[1]*Kp_list[1]*KD_list[1]*KG/(1 + param.vD_list[1]*param.vp_list[1]*Kp_list[1]*KD_list[1]*KG) # Rotation (first), cycle B
+    kDB = param.rD*param.vD_list[1] # Drug binding, cycle B
+    kpB2 = param.rp*param.vp_list[2] # Proton binding (second), cycle B
+    ktB2 = param.rt*param.vp_list[2]*Kp_list[2]*KG/(1 + param.vp_list[2]*Kp_list[2]*KG) # Rotation (first), cycle B
 
     # Forward rate constants, cycle B (zero drugs, one proton)
-    kpC = param.r0*param.vp_list[3] # Proton binding, cycle C
-    ktC = param.r0*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
+    kpC = param.rp*param.vp_list[3] # Proton binding, cycle C
+    ktC = param.rt*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
 
     ### RATE MATRIX ###
     R = np.zeros([8,8]) # Initialize rate matrix

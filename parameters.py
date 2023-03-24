@@ -2,7 +2,7 @@
 parameters.py
 
 Define the parameters for the three- and eight-state models of bacterial efflux pumps.
-Include only the parameters that remain constant between different plots (interaction volumes, r0, etc.).
+Include only the parameters that remain constant between different plots (interaction volumes, characteristic rates, etc.).
 
 Matthew Gerry, March 2023
 '''
@@ -24,10 +24,12 @@ class Parameters:
     # Physical constants - equate to global variables
     kB = kB; T = T; q = q
 
-    def __init__(self, r0, cDo, cpc):
+    def __init__(self, rD, rp, rt, cDo, cpc):
         
         # System-specific parameters
-        self.r0 = r0 # 1/s, rate associated with protein conformational changes
+        self.rD = rD # 1/s, characteristic rate associated with drug binding
+        self.rp = rp # 1/s, characteristic rate associated with proton binding
+        self.rt = rt # 1/s, characteristic rate associated with protein conformational changes
         self.cDo = cDo # M, outside drug concentration
         self.cpc = cpc # M, cytoplasmic proton concentration
 
@@ -35,8 +37,8 @@ class Parameters:
 class Params3(Parameters):
     ''' PARAMETERS INCLUDING THOSE SPECIFIC TO THE THREE-STATE MODEL '''
 
-    def __init__(self, r0, cDo, cpc, vD, vp):
-        Parameters.__init__(self, r0, cDo, cpc)
+    def __init__(self, rD, rp, rt, cDo, cpc, vD, vp):
+        Parameters.__init__(self, rD, rp, rt, cDo, cpc)
         self.vD = vD # 1/M, drug interaction volume
         self.vp = vp # 1/M, proton interaction volume
 
@@ -44,8 +46,8 @@ class Params3(Parameters):
 class Params8(Parameters):
     ''' PARAMETERS INCLUDING THOSE SPECIFIC TO THE EIGHT-STATE MODEL '''
 
-    def __init__(self, r0, cDo, cpc, vD_list, vp_list):
-        Parameters.__init__(self, r0, cDo, cpc)
+    def __init__(self, rD, rp, rt, cDo, cpc, vD_list, vp_list):
+        Parameters.__init__(self, rD, rp, rt, cDo, cpc)
         self.vD_list = vD_list # 1/M, drug interaction volume (list of two values)
         self.vp_list = vp_list # 1/M, proton interaction volume (list of four values)
 
