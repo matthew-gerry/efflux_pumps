@@ -72,7 +72,7 @@ def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     ''' SPECIFICITY OF THE PUMP (3-STATE MODEL) BASED ON MICHAELIS-MENTENT EXPRESSIONS '''
     
     KG = get_derived_params(param, cpp, V_base, kappa)[2]
-    kt = param.r0*param.vD*param.vp*KD*Kp*KG/(1 + param.vD*param.vp*KD*Kp*KG) # Expression for the rotation transition rate
+    kt = param.rt*param.vD*param.vp*KD*Kp*KG/(1 + param.vD*param.vp*KD*Kp*KG) # Expression for the rotation transition rate
 
     Z = 1 + param.vD*param.vp*KD*Kp*KG # A partition function for states 1 and 3
     Kbeta = Kp*(1 + param.vD*KD*KG/Z) # Michaelis-Menten constants
@@ -146,7 +146,7 @@ def p_flux_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
 
     # Additional quantities needed
     KG = get_derived_params(param, cpp, V_base, kappa)[2]
-    ktC = param.r0*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
+    ktC = param.rt*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
 
     # Find steady state solution as eigenvector of R
     SS = rm.steady_state(R)
