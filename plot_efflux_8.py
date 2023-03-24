@@ -238,9 +238,11 @@ def plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_va
 
 
 # Parameter values
-r0 = 1 # 1/s
+rD = 1e9 # 1/s
+rp = 1e9 # 1/s
+rt = 1e6 # 1/s
 vD_list = [1,1] # 1/M
-vp_list = [1,1,1,1] # 1/M
+vp_list = [0.1,0.1,0.1,0.1] # 1/M
 cDo = 1e-11 # M
 cpc = 1e-7 # M
 
@@ -271,7 +273,7 @@ cpp_vals_2 = [1e-7, 1e-5]
 
 #### MAIN CALLS ####
 
-param = Params8(r0, cDo, cpc, vD_list, vp_list) # Create instantiation of Params8 object
+param = Params8(rD, rp, rt, cDo, cpc, vD_list, vp_list) # Create instantiation of Params8 object
 
 plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals)
 plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)

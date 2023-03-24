@@ -66,8 +66,8 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
         ax.plot(cDc_axis_uM, mean_efflux_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     ax.annotate("Increasing pH",xy=(20,0.002),xytext=(20,0.024),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    ax.set_xlim([0, 40])
-    ax.set_ylim([0,0.062])
+    # ax.set_xlim([0, 40])
+    # ax.set_ylim([0,0.062])
     ax.set_xlabel("$[D]\:(\mu M)$")
     ax.set_ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
     ax.legend()
@@ -159,9 +159,11 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 
 # Parameter values
-r0 = 1 # 1/s
+rD = 1e9 # 1/s
+rp = 1e9 # 1/s
+rt = 1e6 # 1/s
 vD = 1 # 1/M
-vp = 1 # 1/M
+vp = 0.1 # 1/M
 cDo = 1e-11 # M
 cpc = 1e-7 # M
 
@@ -187,9 +189,9 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 #### MAIN CALLS ####
 
-param = Params3(r0, cDo, cpc, vD, vp) # Create instantiation of Params3 object
+param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+# plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
+# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
