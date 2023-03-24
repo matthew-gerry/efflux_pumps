@@ -191,7 +191,7 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-# plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
+plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
