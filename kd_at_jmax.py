@@ -95,16 +95,16 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     # Plot KD at Jmax
     fig, ax = plt.subplots()
     for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D] = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{cyt} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.1, 0.2, 0.5, 1, 2])
+    ax.set_yticks([1, 2, 5, 10, 20, 50])
 
     ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]$ $(\mu M)$")
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(mM)$")    
     plt.legend()
     plt.show()
@@ -152,16 +152,16 @@ def plot_KD_at_Jmax_8(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp
     # Plot KD at Jmax
     fig, ax = plt.subplots()
     for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D] = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{cyt} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.1, 0.2, 0.5, 1, 2])
+    ax.set_yticks([0.5, 1, 2, 5, 10])
 
     ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]$ $(\mu M)$")
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(mM)$")    
     plt.legend()
     plt.show()
