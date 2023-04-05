@@ -35,11 +35,12 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # Plot mean values and variances side by side
     KD_axis_uM = 1e6*KD_axis # KD_axis in uM
     cpp_vals_uM = [1e6*x for x in cpp_vals]
-    mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
+    # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
-        plt.semilogx(KD_axis_uM, mean_efflux_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+        plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
+    plt.ylabel("$J\:(s^{-1})$")
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
     plt.show()
 
@@ -59,17 +60,18 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     # Plot mean values and variances side by side
     cDc_axis_uM = 1e6*cDc_axis # KD_axis in uM
     cpp_vals_uM = [1e6*x for x in cpp_vals]
-    mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
+    # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
 
     fig, ax = plt.subplots()
     for i in range(len(cpp_vals)):
-        ax.plot(cDc_axis_uM, mean_efflux_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    ax.annotate("Increasing pH",xy=(20,0.002),xytext=(20,0.024),
+        ax.plot(cDc_axis_uM, mean_efflux[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    ax.annotate("Increasing pH",xy=(20,0.000005),xytext=(20,0.000026),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    # ax.set_xlim([0, 40])
-    # ax.set_ylim([0,0.062])
-    ax.set_xlabel("$[D]\:(\mu M)$")
-    ax.set_ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
+    ax.set_xlim([0, 40])
+    ax.set_ylim([0,0.000062])
+    ax.set_xlabel("$[D]_{cyt}\:(\mu M)$")
+    ax.set_ylabel("$J\:(s^{-1})$")
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.legend()
     plt.show()
 
@@ -101,7 +103,7 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
     ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]$ $(\mu M)$")
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_M$ $(\mu M)$")    
     plt.legend()
     plt.show()
@@ -127,7 +129,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
 
         # Calculation of the specificity
         S_output = np.vectorize(pump.spec_3)(param, KD, Kp, V_base, kappa, cDc, cpp_axis) # Full function
-        Ssimp_output = np.multiply(cpp_axis,KG_axis) # Simplified expression
+        Ssimp_output = param.rt*np.multiply(cpp_axis,KG_axis) # Simplified expression
 
         S_vals.append(S_output)
         Ssimp_vals.append(Ssimp_output)
@@ -147,7 +149,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
     ax.ticklabel_format(style='plain',axis='x') # No scientific notation on x axis
-    ax.set_xlabel("$[p]$ $(\mu M)$")
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$S$")    
     plt.legend()
     plt.show()
@@ -163,7 +165,7 @@ rD = 1e9 # 1/s
 rp = 1e9 # 1/s
 rt = 1e6 # 1/s
 vD = 1 # 1/M
-vp = 0.1 # 1/M
+vp = 1 # 1/M
 cDo = 1e-11 # M
 cpc = 1e-7 # M
 
