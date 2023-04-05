@@ -99,12 +99,12 @@ def plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals
     ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
     KD_axis_uM = microfy(KD_axis) # KD_axis in uM
     cpp_vals_uM = microfy(cpp_vals)
-    efflux_vals_nano = [nanofy(y) for y in efflux_vals] 
 
     for i in range(len(cpp_vals)):
-        plt.semilogx(KD_axis_uM, efflux_vals_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+        plt.semilogx(KD_axis_uM, efflux_vals[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
+    plt.ylabel("$J\:(s^{-1})$")
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
     plt.show()
 
@@ -118,18 +118,18 @@ def plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
     ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
     cDc_axis_uM = microfy(cDc_axis) # KD_axis in uM - this works because cDc_axis is a numpy array
     cpp_vals_uM = microfy(cpp_vals)
-    efflux_vals_nano = [nanofy(y) for y in efflux_vals]
 
     fig, ax = plt.subplots()
     for i in range(len(cpp_vals)):
-        ax.plot(cDc_axis_uM, efflux_vals_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+        ax.plot(cDc_axis_uM, efflux_vals[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     
-    ax.annotate("Increasing pH",xy=(0.05,0.002),xytext=(0.05,0.024),
+    ax.annotate("Increasing pH",xy=(0.04,2e-7),xytext=(0.04,2.5e-6),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    # ax.set_xlim([0, 40])
-    # ax.set_ylim([0,0.062])
-    ax.set_xlabel("$[D]\:(\mu M)$")
-    ax.set_ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
+    ax.set_xlim([0, 0.08])
+    ax.set_ylim([0,6.2e-6])
+    ax.set_xlabel("$[D]_{cyt}\:(\mu M)$")
+    ax.set_ylabel("$J\:(s^{-1})$")
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.legend()
     plt.show()
 
@@ -151,7 +151,7 @@ def plot_KM(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
 
     for i in range(len(KD_vals)):
         plt.semilogx(cpp_axis_uM, KM_vals_uM[i], label="$K_{D,B} =$ "+str(round(1e6*KD_vals[i]))+" $ \mu M$", linestyle = ls_list[i])
-    plt.xlabel("$[p]\:(\mu M)$")
+    plt.xlabel("$[p]_{per}\:(\mu M)$")
     plt.ylabel("$K_M\:(\mu M)$")
     plt.legend()
     plt.show()
@@ -181,7 +181,7 @@ def plot_efficiency_vs_p(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc, cpp_a
     plt.figure()
     for i in range(len(KD_vals)):
         plt.semilogx(cpp_axis_uM, efficiency[i],label="$K_{D,B} =\:"+str(int(KD_vals_uM[i]))+"\:\mu M$",linestyle=ls_list[i])
-        plt.xlabel("$[p]\:(\mu M)$")
+        plt.xlabel("$[p]_{per}\:(\mu M)$")
         plt.ylabel("$J/J_p$")
     plt.legend()
     plt.show()
@@ -210,23 +210,24 @@ def plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_va
         # Configure some things for plotting
     KD_axis_uM = microfy(KD_axis) # KD_axis in uM
     cpp_vals_uM = microfy(cpp_vals)
-    efflux_nano = [nanofy(y) for y in efflux]
-    p_flux_nano = [nanofy(y) for y in p_flux]
+    # efflux_nano = [nanofy(y) for y in efflux]
+    # p_flux_nano = [nanofy(y) for y in p_flux]
 
     ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyles
     colour_list = ["tab:blue","tab:orange","tab:green","tab:red"] # Plot colours
 
     plt.subplot(1,2,1)
     for i in range(len(cpp_vals)):
-        plt.loglog(KD_axis_uM, efflux_nano[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", color=colour_list[i], linestyle=ls_list[0])
-        plt.loglog(KD_axis_uM, p_flux_nano[i], color=colour_list[i], linestyle=ls_list[2])
+        plt.loglog(KD_axis_uM, efflux[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", color=colour_list[i], linestyle=ls_list[0])
+        plt.loglog(KD_axis_uM, p_flux[i], color=colour_list[i], linestyle=ls_list[2])
     plt.xlabel("$K_{D,B}\:(\mu M)$")
-    plt.ylabel(r"$J\:(\times 10^{-9}\:s^{-1})$")
+    plt.ylabel("$J\:(s^{-1})$")
+    # plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     # plt.legend()
 
     plt.subplot(1,2,2)
     for i in range(len(cpp_vals)):
-        plt.loglog(KD_axis_uM, efficiency[i],label="$[p] = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", color=colour_list[i])
+        plt.loglog(KD_axis_uM, efficiency[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", color=colour_list[i])
     plt.xlabel("$K_{D,B}\:(\mu M)$")
     plt.ylabel("$J/J_p$")
     plt.legend()
@@ -254,11 +255,11 @@ cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD
 cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
-KD_axis = np.logspace(-5, -1, 100) # Also for plot_compare_fluxes
+KD_axis = np.logspace(-4, 0, 100) # Also for plot_compare_fluxes
 
 # For plot_efflux_vs_D
 KD_list = [1e-6, 1e-6]
-cDc_axis = np.linspace(cDo,1e-7,800) # Also for plot_KM (need high resolution)
+cDc_axis = np.linspace(cDo,8e-8,1200) # Also for plot_KM (need high resolution)
 
 # For plot_KM
 KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
@@ -266,7 +267,7 @@ cpp_axis = np.logspace(-6.5,-5,50)
 
 # For plot_efficiency_vs_p
 KD_vals_2 = [1e-6, 5e-6, 1e-5, 5e-5]
-cpp_axis_2 = np.logspace(-7.0,-1.5)
+cpp_axis_2 = np.logspace(-7.0,-2.5)
 
 # For plot_compare_fluxes
 cpp_vals_2 = [1e-7, 1e-5]
