@@ -65,10 +65,10 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     fig, ax = plt.subplots()
     for i in range(len(cpp_vals)):
         ax.plot(cDc_axis_uM, mean_efflux[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    ax.annotate("Increasing pH",xy=(20,0.000005),xytext=(20,0.000026),
+    ax.annotate("Increasing pH",xy=(50,0.000005),xytext=(50,0.000022),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    ax.set_xlim([0, 40])
-    ax.set_ylim([0,0.000062])
+    ax.set_xlim([0, 100])
+    ax.set_ylim([0,0.00006])
     ax.set_xlabel("$[D]_{cyt}\:(\mu M)$")
     ax.set_ylabel("$J\:(s^{-1})$")
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
@@ -129,7 +129,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
 
         # Calculation of the specificity
         S_output = np.vectorize(pump.spec_3)(param, KD, Kp, V_base, kappa, cDc, cpp_axis) # Full function
-        Ssimp_output = param.rt*np.multiply(cpp_axis,KG_axis) # Simplified expression
+        Ssimp_output = param.rt*param.vp*np.multiply(cpp_axis,KG_axis) # Simplified expression
 
         S_vals.append(S_output)
         Ssimp_vals.append(Ssimp_output)
@@ -165,7 +165,7 @@ rD = 1e6 # 1/s
 rp = 1e6 # 1/s
 rt = 1e6 # 1/s
 vD = 1 # 1/M
-vp = 1 # 1/M
+vp = 0.1 # 1/M
 cDo = 1e-11 # M
 cpc = 1e-7 # M
 
@@ -174,12 +174,12 @@ cpc = 1e-7 # M
 Kp = 1e-6 # M, proton binding affinity
 V_base = -0.15 # V, base voltage (except plot_specificity)
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
-KD = 1e-6 # M, drug binding affininty (except plot_efflux_vs_KD)
+KD = 1e-5 # M, drug binding affininty (except plot_efflux_vs_KD)
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
 KD_axis = np.logspace(-7, 0.5, 200) # M, drug binding affinity
-cDc_axis = np.linspace(0,4e-5,100) # M, cytoplasmic drug concentration
+cDc_axis = np.linspace(0,1e-4,100) # M, cytoplasmic drug concentration
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
 # For plot_KM and plot_specificity
@@ -193,7 +193,7 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
-plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)

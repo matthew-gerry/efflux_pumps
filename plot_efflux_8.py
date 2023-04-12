@@ -123,10 +123,10 @@ def plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
     for i in range(len(cpp_vals)):
         ax.plot(cDc_axis_uM, efflux_vals[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     
-    ax.annotate("Increasing pH",xy=(0.035,2e-7),xytext=(0.035,2.5e-6),
+    ax.annotate("Increasing pH",xy=(0.6,2e-6),xytext=(0.6,2.3e-5),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    ax.set_xlim([0, 0.07])
-    ax.set_ylim([0,6.2e-6])
+    ax.set_xlim([0, 1.2])
+    ax.set_ylim([0,6.3e-5])
     ax.set_xlabel("$[D]_{cyt}\:(\mu M)$")
     ax.set_ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
@@ -240,8 +240,8 @@ def plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals):
 
 
 # Parameter values
-rD = 1e9 # 1/s
-rp = 1e9 # 1/s
+rD = 1e6 # 1/s
+rp = 1e6 # 1/s
 rt = 1e6 # 1/s
 vD_list = [1,1] # 1/M
 vp_list = [0.1,0.1,0.1,0.1] # 1/M
@@ -255,11 +255,11 @@ cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD
 cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
-KD_axis = np.logspace(-4.5, -0.5, 100) # Also for plot_compare_fluxes
+KD_axis = np.logspace(-5.5, -1.5, 100) # Also for plot_compare_fluxes
 
 # For plot_efflux_vs_D
-KD_list = [1e-6, 1e-6]
-cDc_axis = np.linspace(cDo,7e-8,1200) # Also for plot_KM (need high resolution)
+KD_list = [1e-5, 1e-5]
+cDc_axis = np.linspace(cDo,1.2e-6,1200) # Also for plot_KM (need high resolution)
 
 # For plot_KM
 KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
@@ -267,7 +267,7 @@ cpp_axis = np.logspace(-6.5,-5,50)
 
 # For plot_efficiency_vs_p
 KD_vals_2 = [1e-6, 5e-6, 1e-5, 5e-5]
-cpp_axis_2 = np.logspace(-7.0,-2.5)
+cpp_axis_2 = np.logspace(-5.2, -0.5)
 
 # For plot_compare_fluxes
 cpp_vals_2 = [1e-7, 1e-5]
@@ -278,6 +278,6 @@ param = Params8(rD, rp, rt, cDo, cpc, vD_list, vp_list) # Create instantiation o
 
 plot_efflux_vs_KD(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals)
 plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
-plot_efficiency_vs_p(param, KD_vals_2, Kp_list, V_base, kappa, cDc, cpp_axis_2)
-plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals_2)
+# plot_KM(param, KD_vals, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
+# plot_efficiency_vs_p(param, KD_vals_2, Kp_list, V_base, kappa, cDc, cpp_axis_2)
+# plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals_2)
