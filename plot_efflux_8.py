@@ -79,7 +79,7 @@ def get_KM(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
 nanofy = lambda a : [1e9*x for x in a] # By 9 orders of magnitude
 microfy = lambda a : [1e6*x for x in a] # By 6 orders of magnitude
 
-def plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals):
+def plot_efflux_vs_KD(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals):
     ''' MEAN EFFLUX AS A FUNCTION OF DRUG BINDING AFFINITY '''
 
     efflux_vals = len(cpp_vals)*[[]] # List to populate with values of the mean efflux
@@ -89,7 +89,7 @@ def plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals
         cpp = cpp_vals[i]
 
         for j in range(len(KD_axis)):
-            KD_list = [KDA, KD_axis[j]]
+            KD_list = 2*[KD_axis[j]]
         
             efflux_output = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
 
@@ -123,9 +123,9 @@ def plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
     for i in range(len(cpp_vals)):
         ax.plot(cDc_axis_uM, efflux_vals[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     
-    ax.annotate("Increasing pH",xy=(0.04,2e-7),xytext=(0.04,2.5e-6),
+    ax.annotate("Increasing pH",xy=(0.035,2e-7),xytext=(0.035,2.5e-6),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    ax.set_xlim([0, 0.08])
+    ax.set_xlim([0, 0.07])
     ax.set_ylim([0,6.2e-6])
     ax.set_xlabel("$[D]_{cyt}\:(\mu M)$")
     ax.set_ylabel("$J\:(s^{-1})$")
@@ -134,13 +134,13 @@ def plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
     plt.show()
 
 
-def plot_KM(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
+def plot_KM(param, KD_vals, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
     ''' PLOT NUMERICALLY APPROXIMATED KM VALUES AS A FUNCTION OF [p] '''
 
     KM_vals = []
 
     for i in range(len(KD_vals)): # Get KM as a function of [p] at each KD (B) value
-        KD_list = [KDA, KD_vals[i]]
+        KD_list = 2*[KD_vals[i]]
 
         KM_vals.append(get_KM(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_axis))
 
@@ -150,21 +150,22 @@ def plot_KM(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc_axis, cpp_axis):
     KM_vals_uM = [microfy(y) for y in KM_vals]
 
     for i in range(len(KD_vals)):
-        plt.semilogx(cpp_axis_uM, KM_vals_uM[i], label="$K_{D,B} =$ "+str(round(1e6*KD_vals[i]))+" $ \mu M$", linestyle = ls_list[i])
+        plt.semilogx(cpp_axis_uM, KM_vals_uM[i], label="$K_D =$ "+str(round(1e6*KD_vals[i]))+" $ \mu M$", linestyle = ls_list[i])
     plt.xlabel("$[p]_{per}\:(\mu M)$")
     plt.ylabel("$K_M\:(\mu M)$")
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
     plt.show()
 
 
-def plot_efficiency_vs_p(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc, cpp_axis):
+def plot_efficiency_vs_p(param, KD_vals, Kp_list, V_base, kappa, cDc, cpp_axis):
     ''' PLOT CHEMICAL EFFICIENCY AS A FUNCTION OF [p] FOR VARIOUS KD VALUES '''
 
     efficiency = len(KD_vals)*[[]] # Allocate array for chemical efficiency values
 
     # Evaluate efflux at each value of periplasmic proton concentration
     for i in range(len(KD_vals)):
-        KD_list = [KDA, KD_vals[i]] # Cycle through different values of K_D (cycle B)
+        KD_list = 2*[KD_vals[i]] # Cycle through different values of K_D (cycle B)
 
         for j in range(len(cpp_axis)):
             cpp = cpp_axis[j]
@@ -180,14 +181,14 @@ def plot_efficiency_vs_p(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc, cpp_a
 
     plt.figure()
     for i in range(len(KD_vals)):
-        plt.semilogx(cpp_axis_uM, efficiency[i],label="$K_{D,B} =\:"+str(int(KD_vals_uM[i]))+"\:\mu M$",linestyle=ls_list[i])
+        plt.semilogx(cpp_axis_uM, efficiency[i],label="$K_D =\:"+str(int(KD_vals_uM[i]))+"\:\mu M$",linestyle=ls_list[i])
         plt.xlabel("$[p]_{per}\:(\mu M)$")
         plt.ylabel("$J/J_p$")
     plt.legend()
     plt.show()
     
 
-def plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals):
+def plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals):
     ''' COMPARE THE PROTON FLUX AND DRUG EFFLUX WITH THE MULTICYCLIC MODEL OVER A RANGE OF K_D '''
 
     efflux, p_flux, efficiency = len(cpp_vals)*[[]], len(cpp_vals)*[[]], len(cpp_vals)*[[]]
@@ -197,7 +198,7 @@ def plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_va
         cpp = cpp_vals[i] # Cycle through different values of [p]
 
         for j in range(len(KD_axis)):
-            KD_list = [KDA, KD_axis[j]]
+            KD_list = 2*[KD_axis[j]]
 
             efflux_output = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
             p_flux_output = pump.p_flux_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
@@ -220,7 +221,7 @@ def plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_va
     for i in range(len(cpp_vals)):
         plt.loglog(KD_axis_uM, efflux[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", color=colour_list[i], linestyle=ls_list[0])
         plt.loglog(KD_axis_uM, p_flux[i], color=colour_list[i], linestyle=ls_list[2])
-    plt.xlabel("$K_{D,B}\:(\mu M)$")
+    plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     # plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     # plt.legend()
@@ -228,7 +229,7 @@ def plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_va
     plt.subplot(1,2,2)
     for i in range(len(cpp_vals)):
         plt.loglog(KD_axis_uM, efficiency[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", color=colour_list[i])
-    plt.xlabel("$K_{D,B}\:(\mu M)$")
+    plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J/J_p$")
     plt.legend()
 
@@ -248,18 +249,17 @@ cDo = 1e-11 # M
 cpc = 1e-7 # M
 
 Kp_list = [1e-6, 1e-6, 1e-6, 1e-6] #M, proton binding affinities
-KDA = 1e-6 # M, drug binding affinity for A cycle
 V_base = -0.15 # V, base voltage (except plot_specificity)
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD
 cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
-KD_axis = np.logspace(-4, 0, 100) # Also for plot_compare_fluxes
+KD_axis = np.logspace(-4.5, -0.5, 100) # Also for plot_compare_fluxes
 
 # For plot_efflux_vs_D
 KD_list = [1e-6, 1e-6]
-cDc_axis = np.linspace(cDo,8e-8,1200) # Also for plot_KM (need high resolution)
+cDc_axis = np.linspace(cDo,7e-8,1200) # Also for plot_KM (need high resolution)
 
 # For plot_KM
 KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
@@ -276,8 +276,8 @@ cpp_vals_2 = [1e-7, 1e-5]
 
 param = Params8(rD, rp, rt, cDo, cpc, vD_list, vp_list) # Create instantiation of Params8 object
 
-plot_efflux_vs_KD(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals)
 plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals, KDA, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
-plot_efficiency_vs_p(param, KD_vals_2, KDA, Kp_list, V_base, kappa, cDc, cpp_axis_2)
-plot_compare_fluxes(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc, cpp_vals_2)
+plot_KM(param, KD_vals, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
+plot_efficiency_vs_p(param, KD_vals_2, Kp_list, V_base, kappa, cDc, cpp_axis_2)
+plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals_2)

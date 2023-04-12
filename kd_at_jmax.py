@@ -112,7 +112,7 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
 
 #### FUNCTIONS: EIGHT-STATE MODEL ####
 
-def efflux_matrix_8(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp_axis):
+def efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis):
     ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, EIGHT-STATE MODEL '''
 
     efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
@@ -125,14 +125,14 @@ def efflux_matrix_8(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp_a
             cpp = cpp_axis[i]
 
             for k in range(len(KD_axis)): # Must write for-loop explicitly due to how KD_list is defined
-                KD_list = [KDA, KD_axis[k]]
+                KD_list = 2*[KD_axis[k]]
 
                 efflux_vals[i,k,j] = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
     
     return efflux_vals
 
 
-def plot_KD_at_Jmax_8(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp_axis, filename):
+def plot_KD_at_Jmax_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis, filename):
     ''' PLOT KD AT Jmax FOR THE EIGHT-STATE MODEL AT THE PARAMETER VALUES SPECIFIED '''
 
     # Note data is saved in/loaded from the parent directory
@@ -144,7 +144,7 @@ def plot_KD_at_Jmax_8(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp
         '''
 
     except: # Otherwise calculate the efflux values
-        J = efflux_matrix_8(param, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp_axis)
+        J = efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis)
         np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
 
     KD_at_Jmax = get_KD_at_Jmax(J, KD_axis)
@@ -173,7 +173,7 @@ param3 = Params3(1e9, 1e9, 1e6, 1e-11, 1e-7, 1, 0.1) # Create instantiation of P
 plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "dummy_data3")
 
 param8 = Params8(1e9, 1e9, 1e6, 1e-11, 1e-7, [1,1], [0.1,0.1,0.1,0.1]) # Create instantiation of Params8 class
-plot_KD_at_Jmax_8(param8, KD_axis, KDA, Kp_list, V_base, kappa, cDc_vals, cpp_axis, "dummy_data8")
+plot_KD_at_Jmax_8(param8, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis, "dummy_data8")
 
 
 
