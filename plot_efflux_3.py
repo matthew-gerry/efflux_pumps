@@ -28,7 +28,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
 
-        mean_output = np.vectorize(pump.efflux_MM_3)(param, KD_axis, Kp, V_base, kappa, cDc, cpp)
+        mean_output = np.vectorize(pump.efflux_numerical_3)(param, KD_axis, Kp, V_base, kappa, cDc, cpp)
 
         mean_efflux.append(mean_output)
 
@@ -53,7 +53,7 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     # Evaluate efflux mean at each value of KD and cpp
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
-        mean_output = np.vectorize(pump.efflux_MM_3)(param, KD, Kp, V_base, kappa, cDc_axis, cpp)
+        mean_output = np.vectorize(pump.efflux_numerical_3)(param, KD, Kp, V_base, kappa, cDc_axis, cpp)
 
         mean_efflux.append(mean_output)
 
@@ -161,8 +161,8 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 
 # Parameter values
-rD = 1e9 # 1/s
-rp = 1e9 # 1/s
+rD = 1e6 # 1/s
+rp = 1e6 # 1/s
 rt = 1e6 # 1/s
 vD = 1 # 1/M
 vp = 1 # 1/M
@@ -195,5 +195,5 @@ param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 
 
 plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+# plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
+# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
