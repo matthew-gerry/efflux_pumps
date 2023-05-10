@@ -4,6 +4,10 @@ efflux_nprotons.py
 Explore the effects of changing the value of the parameter n, the number
 of protons involved in the proton binding step of the efflux pump mechanism.
 
+Presently we are raising Kp to the power of n as we do the proton concentration.
+This is a choice; another option would be to keep Kp fixed value, though this
+is not necessarily intuitive as its value will change regardless.
+
 Matthew Gerry, May 2023
 '''
 
