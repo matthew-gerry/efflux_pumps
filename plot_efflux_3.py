@@ -1,5 +1,5 @@
 '''
-plot_efflux_3state.py
+plot_efflux_3.py
 
 Plotting functions for the three-state model of bacterial efflux pumps.
 
