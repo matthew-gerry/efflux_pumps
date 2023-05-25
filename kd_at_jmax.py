@@ -30,8 +30,8 @@ V_base = -0.15 # V, base voltage
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 
 # Axes and values for comutations, plotting
-KD_axis = np.logspace(-5,-1,1000) # M, drug binding affinity
-cpp_axis = np.logspace(-7,-5,200) # M, periplasmic proton concentration
+KD_axis = np.logspace(-8,2,1500) # M, drug binding affinity
+cpp_axis = np.logspace(-7,-5,400) # M, periplasmic proton concentration
 cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 
 
