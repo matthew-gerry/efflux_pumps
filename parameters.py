@@ -30,6 +30,7 @@ class Parameters:
         self.rD = rD # 1/s, characteristic rate associated with drug binding
         self.rp = rp # 1/s, characteristic rate associated with proton binding
         self.rt = rt # 1/s, characteristic rate associated with protein conformational changes
+        # For consistency, 1/rt = 1/rD + 1/rp + tau_C, tau_C a timescale for conformational changes
         self.cDo = cDo # M, outside drug concentration
         self.cpc = cpc # M, cytoplasmic proton concentration
 

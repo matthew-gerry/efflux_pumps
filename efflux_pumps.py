@@ -60,10 +60,14 @@ def KM_3(param, KD, Kp, V_base, kappa, cpp):
     
     KG = get_derived_params(param, cpp, V_base, kappa)[2]   
 
+    # Define ratios of characteristic rates
+    RD = param.rD/param.rt
+    Rp = param.rp/param.rt
+
     # Components of the MM-like expression
     Z = 1 + param.vD*param.vp*KD*Kp*KG # A partition function for states 1 and 3
-    C1 = 1 + param.vD*KD*KG + param.vD*param.vp*KD*Kp*KG
-    KM = (KD*(cpp*param.vp*KG + C1) + param.cDo*param.cpc*(param.vD*KD + param.vp*(Kp + cpp))/Kp)/(cpp*Z/Kp + C1)
+    C1 = 1 + param.vD*KD*KG/Rp + param.vD*param.vp*KD*Kp*KG
+    KM = (KD*(cpp*param.vp*KG/RD + C1) + param.cDo*param.cpc*(param.vD*KD/Rp + param.vp*(Kp + cpp)/RD)/Kp)/(cpp*Z/Kp + C1)
 
     return KM
 
@@ -74,8 +78,12 @@ def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     KG = get_derived_params(param, cpp, V_base, kappa)[2]
     kt = param.rt*param.vD*param.vp*KD*Kp*KG/(1 + param.vD*param.vp*KD*Kp*KG) # Expression for the rotation transition rate
 
+    # Define ratios of characteristic rates
+    RD = param.rD/param.rt
+    Rp = param.rp/param.rt
+
     Z = 1 + param.vD*param.vp*KD*Kp*KG # A partition function for states 1 and 3
-    Kbeta = Kp*(1 + param.vD*KD*KG/Z) # Michaelis-Menten constants
+    Kbeta = Kp*(1 + param.vD*KD*KG/(Rp*Z)) # Michaelis-Menten constants
     KM = KM_3(param, KD, Kp, V_base, kappa, cpp)
 
     alpha = 1 - param.cDo*param.cpc/(cDc*cpp*KG) # Efficiency factor (1 in the irreversible limit)
