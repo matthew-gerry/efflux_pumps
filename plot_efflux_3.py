@@ -163,7 +163,8 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e6 # 1/s
 rp = 1e6 # 1/s
-rt = 1e6 # 1/s
+tau_C = 1e-6 # s, timescale for conformational changes
+rt = 1/(1/rD + 1/rp + tau_C) # 1/s
 vD = 1 # 1/M
 vp = 0.1 # 1/M
 cDo = 1e-11 # M
@@ -193,7 +194,7 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
