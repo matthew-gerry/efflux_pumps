@@ -133,6 +133,59 @@ def cgf_8(R, dchi, chisteps):
     return CGF
 
 
+#### FUNCTIONS: FIVE-STATE MODEL ####
+
+
+def rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
+    '''
+    RATE MATRIX FOR THE EFFLUX PUMP, THREE-STATE KINETIC MODEL
+    
+    CALLS A Params3 OBJECT AS DEFINED IN params.py
+    '''
+
+    # Electric potential Boltzmann factor
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+
+    # Forward rate constants
+    kD = param.rD*param.vD # Drug binding
+    kp = param.rp*param.vp # Proton binding
+    kt = param.rt/(1 + QD*Qp/(KD*Kp))
+
+    R = np.zeros([3,3]) # Initialize rate matrix
+    # Insert transition rates
+    R[0,1] = kD*KD; R[0,4] = kD*QD
+    R[1,0] = kD*cDc; R[1,2] = kp*Kp
+    R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KD*Kp)
+    R[3,2] = kt; R[3,4] = kp*param.cpc/KG
+    R[4,3] = kp*Qp; R[4,0] = kD*param.cDc
+
+    # Get diagonal elements from normalization condition
+    for i in range(5):
+        R[i,i] = -sum(R)[i]
+
+    return R
+
+def cgf_5(R, dchi, chisteps):
+    ''' CUMULANT GENERATING FUNCTION FOR THE FIVE-STATE MODEL, GIVEN A RATE MATRIX AND PARAMETERS DESCRIBING THE CHI AXIS '''
+
+    # chisteps - number of steps along the chi axis from zero to the max value
+    # Define the chi axis such that it is symmetric about zero
+    chiplus = np.linspace(0,dchi*chisteps,chisteps+1)
+    chi_axis = np.concatenate([-np.flip(chiplus)[:-1],chiplus])
+
+    CGF = np.zeros(len(chi_axis)) # Allocate list to hold CGF values
+    for i,chi in enumerate(chi_axis):
+        R_chi = R
+        R_chi[2,3] = R[2,3]*np.exp(complex(0,chi)) # Dress the generator with a counting field
+        R_chi[3,2] = R[3,2]*np.exp(complex(0,-chi)) # Vanishes with the irreversibility assumption
+
+       # The CGF is the eigenvalue whose real part approaches zero as chi -> 0
+        eig_chi = np.linalg.eig(R_chi)[0]
+        CGF[i] = eig_chi[eig_chi.real==max(eig_chi.real)]
+
+    return CGF
+
+
 #### FUNCTIONS: GENERAL ####
 
 def steady_state(R):
