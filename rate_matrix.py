@@ -151,13 +151,13 @@ def rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
     kp = param.rp*param.vp # Proton binding
     kt = param.rt/(1 + QD*Qp/(KD*Kp))
 
-    R = np.zeros([3,3]) # Initialize rate matrix
+    R = np.zeros([5,5]) # Initialize rate matrix
     # Insert transition rates
     R[0,1] = kD*KD; R[0,4] = kD*QD
     R[1,0] = kD*cDc; R[1,2] = kp*Kp
     R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KD*Kp)
     R[3,2] = kt; R[3,4] = kp*param.cpc/KG
-    R[4,3] = kp*Qp; R[4,0] = kD*param.cDc
+    R[4,3] = kp*Qp; R[4,0] = kD*param.cDo
 
     # Get diagonal elements from normalization condition
     for i in range(5):

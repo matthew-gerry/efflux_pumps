@@ -179,3 +179,17 @@ def entropy_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
     EPR = entropy_contributions.sum() # Sum over all contributions
 
     return EPR
+
+
+#### FUNCTIONS: 5-STATE MODEL ####
+
+def efflux_numerical_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
+    ''' GET MEAN EFFLUX RATE BY NUMERICALLY SOLVING FOR THE STEADY STATE, 5-STATE MODEL '''
+    
+    R = rm.rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp)
+
+    # Find steady state solution as eigenvector of R
+    SS = rm.steady_state(R)
+    efflux = SS[4]*R[0,4] - SS[0]*R[4,0] # Efflux at steady state
+
+    return efflux
