@@ -39,6 +39,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.ylim(0,6.5e-3)
+    plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
@@ -201,7 +202,7 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
