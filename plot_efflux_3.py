@@ -28,7 +28,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
 
-        mean_output = np.vectorize(pump.efflux_numerical_3)(param, KD_axis, Kp, V_base, kappa, cDc, cpp)
+        mean_output = np.vectorize(pump.efflux_MM_3)(param, KD_axis, Kp, V_base, kappa, cDc, cpp)
 
         mean_efflux.append(mean_output)
 
@@ -53,7 +53,7 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     # Evaluate efflux mean at each value of KD and cpp
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
-        mean_output = np.vectorize(pump.efflux_numerical_3)(param, KD, Kp, V_base, kappa, cDc_axis, cpp)
+        mean_output = np.vectorize(pump.efflux_MM_3)(param, KD, Kp, V_base, kappa, cDc_axis, cpp)
 
         mean_efflux.append(mean_output)
 
@@ -65,11 +65,11 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     fig, ax = plt.subplots()
     for i in range(len(cpp_vals)):
         ax.plot(cDc_axis_uM, mean_efflux[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    ax.annotate("Increasing pH",xy=(50,0.000005),xytext=(50,0.000022),
+    ax.annotate("Increasing pH",xy=(50,0.00025),xytext=(50,0.0011),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
     ax.set_xlim([0, 100])
-    ax.set_ylim([0,0.00006])
-    ax.set_xlabel("$[D]_{cyt}\:(\mu M)$")
+    ax.set_ylim([0,0.0028])
+    ax.set_xlabel("$[D]_{in}\:(\mu M)$")
     ax.set_ylabel("$J\:(s^{-1})$")
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.legend()
@@ -136,11 +136,14 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
 
     KG_base_vals = [np.exp(-q*x/(kB*T)) for x in V_base_vals] # KG_base_vals to use as plot labels
 
+    S_micro = [1e-6*x for x in S_vals]
+    Ssimp_micro = [1e-6*x for x in Ssimp_vals]
+
     fig, ax = plt.subplots()
     for i in range(len(V_base_vals)):
-        ax.semilogx(1e6*cpp_axis, S_vals[i], label="$K_G|_{\Delta\mu_p=0} =$ "+str(int(round(KG_base_vals[i]))), linestyle=ls_list[i],linewidth=3)
+        ax.semilogx(1e6*cpp_axis, Ssimp_micro[i], label="$K_G|_{\Delta\mu_p=0} =$ "+str(int(round(KG_base_vals[i]))), linestyle=ls_list[i],linewidth=3)
     for i in range(len(V_base_vals)):
-        ax.semilogx(1e6*cpp_axis, Ssimp_vals[i], "--k", linewidth=1)
+        ax.semilogx(1e6*cpp_axis, Ssimp_micro[i], "--k", linewidth=1)
 
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -150,7 +153,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
 
     ax.ticklabel_format(style='plain',axis='x') # No scientific notation on x axis
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$S$")    
+    ax.set_ylabel("$S$ $(\mu M^{-1}s^{-1})$")    
     plt.legend()
     plt.show()
 
@@ -161,13 +164,13 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 
 # Parameter values
-rD = 1e6 # 1/s
-rp = 1e6 # 1/s
-tau_C = 1e-6 # s, timescale for conformational changes
+rD = 1e8 # 1/s
+rp = 1e7 # 1/s
+tau_C = 1e-7 # s, timescale for conformational changes
 rt = 1/(1/rD + 1/rp + tau_C) # 1/s
 vD = 1 # 1/M
-vp = 0.1 # 1/M
-cDo = 1e-11 # M
+vp = 1 # 1/M
+cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 
@@ -195,6 +198,6 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
-# plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-# plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
+plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
+plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
