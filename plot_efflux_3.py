@@ -38,10 +38,12 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    plt.ylim(0,6.5e-3)
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
+    plt.text(10**(2.5),5.8e-3,"(A)",fontsize='large')
     plt.show()
 
 
@@ -104,7 +106,8 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$K_M$ $(\mu M)$")    
+    ax.set_ylabel("$K_M$ $(\mu M)$")
+    ax.text(0.9,4.8,"(A)",fontsize='large')
     plt.legend()
     plt.show()
 
@@ -153,7 +156,8 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
 
     ax.ticklabel_format(style='plain',axis='x') # No scientific notation on x axis
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$S$ $(\mu M^{-1}s^{-1})$")    
+    ax.set_ylabel("$S$ $(\mu M^{-1}s^{-1})$")
+    ax.text(0.9,4.8e-4,'(B)',fontsize='large')
     plt.legend()
     plt.show()
 
@@ -197,7 +201,7 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
-plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
+# plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
 plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)

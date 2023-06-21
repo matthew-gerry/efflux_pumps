@@ -120,7 +120,7 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     # Plot KD at Jmax
     fig, ax = plt.subplots()
     for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{cyt} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -131,6 +131,7 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(mM)$")    
+    ax.text(0.9,3.5,"(B)",fontsize='large')
     plt.legend()
     plt.show()
 
@@ -155,7 +156,7 @@ def plot_logwidth_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, filen
     # Plot log-width
     fig, ax = plt.subplots()
     for j in range(np.shape(J_logwidth)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.semilogx(1e6*cpp_axis, J_logwidth[j,:], label="$[D]_{cyt} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.semilogx(1e6*cpp_axis, J_logwidth[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     # ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -211,7 +212,7 @@ def plot_KD_at_Jmax_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis
     # Plot KD at Jmax
     fig, ax = plt.subplots()
     for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{cyt} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
