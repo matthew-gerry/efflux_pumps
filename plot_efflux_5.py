@@ -67,15 +67,19 @@ def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, 
     fig, ax1 = plt.subplots()
     for i in range(len(cpp_vals)):
         ax1.semilogx(KD_ratio_axis, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    ax1.set_xlabel("$K_{D,out}/K_{D,in}$")
+    ax1.set_xlabel(r"$\tilde{K_D}/K_D$")
     ax1.set_ylabel("$J\:(s^{-1})$")
     ax1.legend()
     ax1.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
 
-    ax2 = fig.add_axes([0.21,0.37,0.2,0.2])
+    ax2 = fig.add_axes([0.21,0.57,0.2,0.2])
     ax2.semilogx(KD_ratio_axis, Et_eV, '-k')
     ax2.text(0.008,0.1,"$E_t\:(eV)$")
 
+    # ax2.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    # ax2.ticklabel_format(style='plain',axis='x') # No scientific notation on x axis
+    ax2.set_xticks([0.01, 1, 100]) 
+    
     plt.show()
 
 
@@ -85,12 +89,12 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 
 # Parameter values
-rD = 1e7 # 1/s
-rp = 1e9 # 1/s
-tau_C = 1e-9 # s, timescale for conformational changes
+rD = 1e8 # 1/s
+rp = 1e7 # 1/s
+tau_C = 1e-7 # s, timescale for conformational changes
 rt = 1/tau_C # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
-vp = 0.1 # 1/M
+vp = 1 # 1/M
 cDo = 1e-5 # M
 cpc = 1e-7 # M
 
@@ -100,17 +104,17 @@ Kp = 1e-6 # M, proton binding affinity from periplasm
 Kp_ratio = 1 # M, multiply by Kp to get proton binding affinity from cytoplasm
 V_base = -0.15 # V, base voltage
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
-cDc = 1e-6 # M, cytoplasmic drug concentration
+cDc = 1e-5 # M, cytoplasmic drug concentration
 
 
 # Variables for plot_efflux_vs_KD
-KD_axis = np.logspace(-8.5, -2.5, 200) # M, drug binding affinity
+KD_axis = np.logspace(-8.5, -0.5, 200) # M, drug binding affinity
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 KD_ratio = 2 # M, multiply by KD to get drug binding affinity from outside
 
 # Variables for plot_efflux_vs_ratio
 KD = 1e-6 # M, drug binding affinity from inside
-KD_ratio_axis = np.logspace(-2,3,50) # Ratio of outside to inside drug binding affinities
+KD_ratio_axis = np.logspace(-3,2.5,50) # Ratio of outside to inside drug binding affinities
 
 
 #### MAIN CALLS ####
