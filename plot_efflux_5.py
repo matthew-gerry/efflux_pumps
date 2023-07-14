@@ -72,7 +72,7 @@ def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, 
     ax1.legend()
     ax1.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
 
-    ax2 = fig.add_axes([0.21,0.57,0.2,0.2])
+    ax2 = fig.add_axes([0.17,0.57,0.18,0.2])
     ax2.semilogx(KD_ratio_axis, Et_eV, '-k')
     ax2.text(0.008,0.1,"$E_t\:(eV)$")
 
@@ -114,7 +114,7 @@ KD_ratio = 2 # M, multiply by KD to get drug binding affinity from outside
 
 # Variables for plot_efflux_vs_ratio
 KD = 1e-6 # M, drug binding affinity from inside
-KD_ratio_axis = np.logspace(-3,2.5,50) # Ratio of outside to inside drug binding affinities
+KD_ratio_axis = np.logspace(-2.5,4.5,50) # Ratio of outside to inside drug binding affinities
 
 
 #### MAIN CALLS ####
