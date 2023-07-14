@@ -155,8 +155,8 @@ def rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
     # Insert transition rates
     R[0,1] = kD*KD; R[0,4] = kD*QD
     R[1,0] = kD*cDc; R[1,2] = kp*Kp
-    R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KG*KD*Kp)
-    R[3,2] = kt; R[3,4] = kp*param.cpc
+    R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KD*Kp)
+    R[3,2] = kt*KG; R[3,4] = kp*param.cpc
     R[4,3] = kp*Qp; R[4,0] = kD*param.cDo
 
     # Get diagonal elements from normalization condition
