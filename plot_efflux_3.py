@@ -38,13 +38,13 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    plt.ylim(0,6.5e-3)
+    plt.ylim(0,1.3e-2)
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
-    plt.text(10**(2.5),5.8e-3,"(A)",fontsize='large')
+    plt.text(10**(2.5),1.2e-2,"(A)",fontsize='large')
     plt.show()
 
 
@@ -68,10 +68,10 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     fig, ax = plt.subplots()
     for i in range(len(cpp_vals)):
         ax.plot(cDc_axis_uM, mean_efflux[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    ax.annotate("Increasing pH",xy=(50,0.00025),xytext=(50,0.0011),
+    ax.annotate("Increasing pH",xy=(25,0.000025),xytext=(25,0.00027),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
-    ax.set_xlim([0, 100])
-    ax.set_ylim([0,0.0028])
+    ax.set_xlim([0, max(cDc_axis_uM)])
+    ax.set_ylim([0,6.5e-4])
     ax.set_xlabel("$[D]_{in}\:(\mu M)$")
     ax.set_ylabel("$J\:(s^{-1})$")
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
@@ -158,7 +158,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
     ax.ticklabel_format(style='plain',axis='x') # No scientific notation on x axis
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$S$ $(\mu M^{-1}s^{-1})$")
-    ax.text(0.9,4.8e-4,'(B)',fontsize='large')
+    ax.text(0.9,1.05e-3,'(B)',fontsize='large')
     plt.legend()
     plt.show()
 
@@ -171,8 +171,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e8 # 1/s
 rp = 1e7 # 1/s
-tau_C = 1e-7 # s, timescale for conformational changes
-rt = 1/(1/rD + 1/rp + tau_C) # 1/s
+rt = 1e7 # 1/s
 vD = 1 # 1/M
 vp = 1 # 1/M
 cDo = 1e-5 # M
@@ -183,12 +182,12 @@ cpc = 1e-7 # M
 Kp = 1e-6 # M, proton binding affinity
 V_base = -0.15 # V, base voltage (except plot_specificity)
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
-KD = 1e-5 # M, drug binding affininty (except plot_efflux_vs_KD)
+KD = 1e-6 # M, drug binding affininty (except plot_efflux_vs_KD)
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
 KD_axis = np.logspace(-7, 0.5, 200) # M, drug binding affinity
-cDc_axis = np.linspace(0,1e-4,100) # M, cytoplasmic drug concentration
+cDc_axis = np.linspace(0,5e-5,100) # M, cytoplasmic drug concentration
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
 # For plot_KM and plot_specificity
@@ -203,6 +202,6 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
-# plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
+plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
-# plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
+plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)

@@ -91,8 +91,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e8 # 1/s
 rp = 1e7 # 1/s
-tau_C = 1e-7 # s, timescale for conformational changes
-rt = 1/tau_C # 1/s, unlike in the three-state model, rt does not depend on other char. rates
+rt = 1e7 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
 vp = 1 # 1/M
 cDo = 1e-5 # M

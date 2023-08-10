@@ -242,8 +242,7 @@ def plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals):
 # Parameter values
 rD = 1e6 # 1/s
 rp = 1e6 # 1/s
-tau_C = 1e-6 # s, timescale for conformational changes
-rt = 1/(1/rD + 1/rp + tau_C) # 1/s
+rt = 1e6 # 1/s
 vD_list = [1,1] # 1/M
 vp_list = [0.1,0.1,0.1,0.1] # 1/M
 cDo = 1e-11 # M
