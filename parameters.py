@@ -52,6 +52,13 @@ class Params8(Parameters):
         self.vD_list = vD_list # 1/M, drug interaction volume (list of two values)
         self.vp_list = vp_list # 1/M, proton interaction volume (list of four values)
 
+class Params4(Parameters):
+    ''' PARAMETERS INCLUDING THOSE SPECIFIC TO THE FOUR-STATE MODEL '''
+
+    def __init__(self, rD, rp, rt, cDo, cpc, vD, vp_list):
+        Parameters.__init__(self, rD, rp, rt, cDo, cpc)
+        self.vD = vD
+        self.vp_list = vp_list
 
 #### DERIVED PARAMETERS ####
 

@@ -185,6 +185,42 @@ def cgf_5(R, dchi, chisteps):
 
     return CGF
 
+#### FUNCTIONS: FOUR-STATE MODEL ####
+
+def rate_matrix_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
+    '''
+    RATE MATRIX FOR THE FOUR-STATE KINETIC MODEL
+
+    CALLS A Params4 OBJECT AS DEFINED IN params.py
+    '''
+    
+    # Electric potential Boltzmann factor
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+
+    ### FORWARD RATE CONSTANTS ###
+    # Forward rate constants, cycle A (one drug, one proton)
+    kDA = param.rD*param.vD # Drug binding, pumping cycle
+    kpA = param.rp*param.vp_list[0] # Proton binding, pumping cycle
+    ktA = param.rt*param.vD*param.vp_list[0]*KD*Kp_list[0]*KG/(1 + param.vD*param.vp_list[0]*KD*Kp_list[0]*KG) # Conformational transition, pumping cycle
+
+    # Forward rate constants, cycle B (zero drugs, one proton)
+    kpB = param.rp*param.vp_list[1] # Proton binding, waste cycle
+    ktB = param.rt*param.vp_list[1]*Kp_list[1]*KG/(1 + param.vp_list[1]*Kp_list[1]*KG) # Conformational transition, waste cycle
+
+    ### RATE MATRIX ###
+    R = np.zeros([4,4]) # Initialize rate matrix
+    # Insert nonzero transition rates to off-diagonal elements
+    R[0,1] = kDA*KD; R[0,2] = ktA; R[0,3] = kpB*Kp_list[1] + ktB
+    R[1,0] = kDA*cDc; R[1,2] = kpA*Kp_list[0]
+    R[2,0] = ktA*param.cDo*param.cpc/(KD*Kp_list[0]*KG); R[2,1] = kpA*cpp
+    R[3,0] = kpB*cpp + ktB*param.cpc/(Kp_list[1]*KG)
+    
+    # Get diagonal elements from normalization condition
+    for i in range(4):
+        R[i,i] = -sum(R)[i]
+
+    return R
+
 
 #### FUNCTIONS: GENERAL ####
 
