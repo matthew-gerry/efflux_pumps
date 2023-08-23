@@ -220,6 +220,6 @@ def p_flux_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
     # Find steady state solution as eigenvector of R
     SS = rm.steady_state(R)
     efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
-    p_flux = efflux + SS[3]*ktC - SS[0]*ktC*param.cpc/(Kp_list[3]*KG)
+    p_flux = efflux + SS[3]*ktB - SS[0]*ktB*param.cpc/(Kp_list[3]*KG)
 
     return p_flux

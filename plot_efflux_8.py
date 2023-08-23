@@ -1,7 +1,7 @@
 '''
 plot_efflux_8.py
 
-Plotting functions for the three-state model of bacterial efflux pumps.
+Plotting functions for the four-state model of bacterial efflux pumps.
 
 This includes functions to numerically estimate KM and, in turn, the specificity,
 since we do not have analytic expressions for these quantities as we do for the
