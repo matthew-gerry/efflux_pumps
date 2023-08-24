@@ -238,14 +238,13 @@ def plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals):
 
 #### GLOBAL VARIABLES ####
 
-
 # Parameter values
-rD = 1e6 # 1/s
-rp = 1e6 # 1/s
-rt = 1e6 # 1/s
+rD = 1e8 # 1/s
+rp = 1e7 # 1/s
+rt = 1e7 # 1/s
 vD_list = [1,1] # 1/M
-vp_list = [0.1,0.1,0.1,0.1] # 1/M
-cDo = 1e-11 # M
+vp_list = [1,1,1,1] # 1/M
+cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 Kp_list = [1e-6, 1e-6, 1e-6, 1e-6] #M, proton binding affinities
@@ -276,8 +275,8 @@ cpp_vals_2 = [1e-7, 1e-5]
 
 param = Params8(rD, rp, rt, cDo, cpc, vD_list, vp_list) # Create instantiation of Params8 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals)
-plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_D(param, KD_list, Kp_list, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp_list, V_base, kappa, cDc_axis, cpp_axis)
-# plot_efficiency_vs_p(param, KD_vals_2, Kp_list, V_base, kappa, cDc, cpp_axis_2)
+plot_efficiency_vs_p(param, KD_vals_2, Kp_list, V_base, kappa, cDc, cpp_axis_2)
 # plot_compare_fluxes(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals_2)
