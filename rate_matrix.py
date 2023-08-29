@@ -221,6 +221,45 @@ def rate_matrix_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
 
     return R
 
+#### FUNCTIONS: SEVEN-STATE MODEL ####
+
+def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
+    '''
+    RATE MATRIX FOR THE EFFLUX PUMP, SEVEN-STATE KINETIC MODEL
+    
+    CALLS A Params3 OBJECT AS DEFINED IN params.py
+    '''
+
+    # Electric potential Boltzmann factor
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+
+    Kp_pump = Kp_list[0]; Kp_waste = Kp_list[1]
+    Qp_pump = Qp_list[0]; Qp_waste = Qp_list[1]
+
+    # Forward rate constants
+    kD = param.rD*param.vD # Drug binding
+    kp = param.rp*param.vp # Proton binding
+    kt_pump = param.rt/(1 + QD*Qp_pump/(KD*Kp_pump))
+    kt_waste = param.rt/(1 + Qp_waste/Kp_waste)
+
+    R = np.zeros([7,7]) # Initialize rate matrix
+    # Insert transition rates related to pump cycle...
+    R[0,1] = kD*KD; R[0,4] = kD*QD
+    R[1,0] = kD*cDc; R[1,2] = kp*Kp_pump
+    R[2,1] = kp*cpp; R[2,3] = kt_pump*QD*Qp_pump/(KD*Kp_pump)
+    R[3,2] = kt_pump*KG; R[3,4] = kp*param.cpc
+    R[4,3] = kp*Qp_pump; R[4,0] = kD*param.cDo
+
+    # ... and waste cycle
+    R[0,5] = kp*Kp_waste; R[0,6] = kp*Qp_waste
+    R[5,0] = kp*cpp; R[5,6] = kt_waste*Qp_waste/Kp_waste
+    R[6,5] = kt_waste*KG; R[6,0] = kp*param.cpc
+
+    # Get diagonal elements from normalization condition
+    for i in range(7):
+        R[i,i] = -sum(R)[i]
+
+    return R
 
 #### FUNCTIONS: GENERAL ####
 

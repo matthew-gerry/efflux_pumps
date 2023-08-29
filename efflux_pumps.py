@@ -202,7 +202,7 @@ def efflux_numerical_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
 
     R = rm.rate_matrix_4(param, KD, Kp_list, V_base, kappa, cDc, cpp)
 
-        # Find steady state solution as eigenvector of R
+    # Find steady state solution as eigenvector of R
     SS = rm.steady_state(R)
     efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
 
@@ -221,5 +221,34 @@ def p_flux_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
     SS = rm.steady_state(R)
     efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
     p_flux = efflux + SS[3]*ktB - SS[0]*ktB*param.cpc/(Kp_list[1]*KG)
+
+    return p_flux
+
+
+#### FUNCTIONS: 7-STATE MODEL ####
+
+def efflux_numerical_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
+    ''' NUMERICALLY CALCULATE THE EFFLUX FROM THE STEADY-STATE POPULATION DISTRUBTION FOR THE SEVEN-STATE MODEL '''
+
+    R = rm.rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp)
+    
+    # Find steady state solution as eigenvector of R
+    SS = rm.steady_state(R)
+    efflux = SS[4]*R[0,4] - SS[0]*R[4,0] # Efflux at steady state
+
+    return efflux
+
+def p_flux_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
+    ''' GET PROTON FLUX RATE THROUGH A METHOD SIMILAR TO efflux_numerical_7 '''
+
+    R = rm.rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp)
+
+    # Additional quantities needed
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+    
+    # Find steady state solution as eigenvector of R
+    SS = rm.steady_state(R)
+    efflux = SS[4]*R[0,4] - SS[0]*R[4,0] # Efflux at steady state
+    p_flux = efflux + SS[6]*R[0,6] - SS[0]*R[6,0] # Add the proton flux from the waste cycle
 
     return p_flux
