@@ -143,7 +143,7 @@ cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 KD = 1e-6
-QD = 1e-6
+QD = 2*KD
 Kp_pump = 1e-6 # M, primary proton binding affinity for pumping cycle
 Kp_waste = 1e-6 # M, primary proton binding affinity for waste cycle
 V_base = -0.15 # V, base voltage (except plot_specificity)
@@ -152,7 +152,7 @@ cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD
 cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
-KD_axis = np.logspace(-7, 0, 100) # Also for plot_compare_fluxes
+KD_axis = np.logspace(-10.5, -3, 200)
 
 # For plot_efficiency_vs_p
 KD_vals = [1e-6, 5e-6, 1e-5, 5e-5]
@@ -164,5 +164,5 @@ Qp_list = Kp_list
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp_list, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_efficiency_vs_p(param, KD_vals, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_axis)
