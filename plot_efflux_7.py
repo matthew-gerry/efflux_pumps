@@ -101,34 +101,36 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, 
     plt.show()
 
     
-def plot_efficiency_vs_p(param, KD_vals, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_axis):
-    ''' PLOT CHEMICAL EFFICIENCY AS A FUNCTION OF [p] FOR VARIOUS KD VALUES, KP RATIO FIXED '''
+def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals):
+    ''' PLOT CHEMICAL EFFICIENCY AS A FUNCTION OF KD FOR VARIOUS [p] VALUES, KD RATIO FIXED '''
 
-    efficiency = len(KD_vals)*[[]] # Allocate array for chemical efficiency values
+    efficiency = len(cpp_vals)*[[]] # Allocate array for chemical efficiency values
 
     # Evaluate efflux at each value of periplasmic proton concentration
-    for i in range(len(KD_vals)):
-        KD = KD_vals[i]
+    for i in range(len(cpp_vals)):
+        cpp = cpp_vals[i]
 
-        for j in range(len(cpp_axis)):
-            cpp = cpp_axis[j]
+        for j in range(len(KD_axis)):
+            KD = KD_axis[j]
             
-            efflux = pump.efflux_numerical_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp)
-            p_flux = pump.p_flux_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp)
+            efflux = pump.efflux_numerical_7(param, KD, Kp_list, KD_ratio*KD, Qp_list, V_base, kappa, cDc, cpp)
+            p_flux = pump.p_flux_7(param, KD, Kp_list, KD_ratio*KD, Qp_list, V_base, kappa, cDc, cpp)
             efficiency[i] = efficiency[i] + [efflux/p_flux] # Chemical efficiency
 
     # Configure some things for plotting
     ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
-    KD_vals_uM = microfy(KD_vals) # Kp_vals in uM
-    cpp_axis_uM = microfy(cpp_axis) # cpp_axis in uM
+    KD_axis_uM = microfy(KD_axis) # Kp_vals in uM
+    cpp_vals_uM = microfy(cpp_vals) # cpp_axis in uM
 
     plt.figure()
-    for i in range(len(KD_vals)):
-        plt.semilogx(cpp_axis_uM, efficiency[i],label="$K_D =\:"+str(int(KD_vals_uM[i]))+"\:\mu M$",linestyle=ls_list[i])
-        plt.xlabel("$[p]_{per}\:(\mu M)$")
+    for i in range(len(cpp_vals)):
+        plt.semilogx(KD_axis_uM, efficiency[i],label="$[p]_{per} =\:"+str(round(cpp_vals_uM[i],1))+"\:\mu M$",linestyle=ls_list[i])
+        plt.xlabel("$K_D\:(\mu M)$")
         plt.ylabel("$J/J_p$")
     plt.legend()
     plt.show()
+
+
 
 
 #### GLOBAL VARIABLES ####
@@ -155,8 +157,9 @@ cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
 KD_axis = np.logspace(-10.5, -3, 200)
 
 # For plot_efficiency_vs_p
-KD_vals = [1e-6, 5e-6, 1e-5, 5e-5]
-cpp_axis = np.logspace(-7, -1)
+KD_axis_2 = np.logspace(-9, -2, 200)
+cpp_vals_2 = [1e-7, 1e-6, 1e-5]
+KD_ratio = 1
 Kp_list = [Kp_pump, Kp_waste]
 Qp_list = Kp_list
 
@@ -164,5 +167,5 @@ Qp_list = Kp_list
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_vals)
-plot_efficiency_vs_p(param, KD_vals, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_axis)
+# plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_efficiency_vs_p(param, KD_axis_2, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals_2)
