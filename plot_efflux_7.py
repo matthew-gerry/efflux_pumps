@@ -71,7 +71,7 @@ def get_KM(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc_axis, cpp_axis):
 nanofy = lambda a : [1e9*x for x in a] # By 9 orders of magnitude
 microfy = lambda a : [1e6*x for x in a] # By 6 orders of magnitude
 
-def plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_vals):
+def plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals):
     ''' MEAN EFFLUX AS A FUNCTION OF DRUG BINDING AFFINITY '''
 
     efflux_vals = len(cpp_vals)*[[]] # List to populate with values of the mean efflux
@@ -83,7 +83,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, 
         for j in range(len(KD_axis)):
             KD = KD_axis[j]
         
-            efflux_output = pump.efflux_numerical_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp)
+            efflux_output = pump.efflux_numerical_7(param, KD, Kp_list, KD_ratio*KD, Qp_list, V_base, kappa, cDc, cpp)
 
             efflux_vals[i] = efflux_vals[i] + [efflux_output]
         
@@ -94,9 +94,11 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, 
 
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, efflux_vals[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    plt.ylim([0, 6.8])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    plt.text(2, 6.3, '(B)')
     plt.legend()
     plt.show()
 
@@ -125,9 +127,11 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
     plt.figure()
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, efficiency[i],label="$[p]_{per} =\:"+str(round(cpp_vals_uM[i],1))+"\:\mu M$",linestyle=ls_list[i])
-        plt.xlabel("$K_D\:(\mu M)$")
-        plt.ylabel("$J/J_p$")
-    plt.legend()
+    plt.ylim([0, 1.1])
+    plt.xlabel("$K_D\:(\mu M)$")
+    plt.ylabel("$J/J_p$")
+    # plt.legend()
+    plt.text(2,1,'(A)')
     plt.show()
 
 
@@ -145,27 +149,23 @@ cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 KD = 1e-6
-QD = 2*KD
 Kp_pump = 1e-6 # M, primary proton binding affinity for pumping cycle
 Kp_waste = 1e-6 # M, primary proton binding affinity for waste cycle
 V_base = -0.15 # V, base voltage (except plot_specificity)
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
-# For plot_efflux_vs_KD
-cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
-KD_axis = np.logspace(-10.5, -3, 200)
-
-# For plot_efficiency_vs_p
-KD_axis_2 = np.logspace(-9, -2, 200)
-cpp_vals_2 = [1e-7, 1e-6, 1e-5]
-KD_ratio = 1
+# Plot axis and parameters defining different curves
+KD_axis = np.logspace(-9, -2, 200)
 Kp_list = [Kp_pump, Kp_waste]
 Qp_list = Kp_list
+cpp_vals = [1e-7, 1e-6, 1e-5]
+KD_ratio = 1
+
 
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp_vals)
-plot_efficiency_vs_p(param, KD_axis_2, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals_2)
+plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
