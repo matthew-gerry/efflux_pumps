@@ -99,7 +99,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa,
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.text(2, 6.3, '(B)')
-    plt.legend()
+    # plt.legend()
     plt.show()
 
     
@@ -130,7 +130,7 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
     plt.ylim([0, 1.1])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J/J_p$")
-    # plt.legend()
+    plt.legend()
     plt.text(2,1,'(A)')
     plt.show()
 

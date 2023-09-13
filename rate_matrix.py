@@ -149,14 +149,14 @@ def rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
     # Forward rate constants
     kD = param.rD*param.vD # Drug binding
     kp = param.rp*param.vp # Proton binding
-    kt = param.rt/(1 + QD*Qp/(KD*Kp))
+    kt = param.rt/(1 + QD*Qp/(KG*KD*Kp))
 
     R = np.zeros([5,5]) # Initialize rate matrix
     # Insert transition rates
     R[0,1] = kD*KD; R[0,4] = kD*QD
     R[1,0] = kD*cDc; R[1,2] = kp*Kp
-    R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KD*Kp)
-    R[3,2] = kt*KG; R[3,4] = kp*param.cpc
+    R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KG*KD*Kp)
+    R[3,2] = kt; R[3,4] = kp*param.cpc
     R[4,3] = kp*Qp; R[4,0] = kD*param.cDo
 
     # Get diagonal elements from normalization condition
@@ -239,21 +239,21 @@ def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
     # Forward rate constants
     kD = param.rD*param.vD # Drug binding
     kp = param.rp*param.vp # Proton binding
-    kt_pump = param.rt/(1 + QD*Qp_pump/(KD*Kp_pump))
-    kt_waste = param.rt/(1 + Qp_waste/Kp_waste)
+    kt_pump = param.rt/(1 + QD*Qp_pump/(KG*KD*Kp_pump))
+    kt_waste = param.rt/(1 + Qp_waste/(KG*Kp_waste))
 
     R = np.zeros([7,7]) # Initialize rate matrix
     # Insert transition rates related to pump cycle...
     R[0,1] = kD*KD; R[0,4] = kD*QD
     R[1,0] = kD*cDc; R[1,2] = kp*Kp_pump
-    R[2,1] = kp*cpp; R[2,3] = kt_pump*QD*Qp_pump/(KD*Kp_pump)
-    R[3,2] = kt_pump*KG; R[3,4] = kp*param.cpc
+    R[2,1] = kp*cpp; R[2,3] = kt_pump*QD*Qp_pump/(KG*KD*Kp_pump)
+    R[3,2] = kt_pump; R[3,4] = kp*param.cpc
     R[4,3] = kp*Qp_pump; R[4,0] = kD*param.cDo
 
     # ... and waste cycle
     R[0,5] = kp*Kp_waste; R[0,6] = kp*Qp_waste
-    R[5,0] = kp*cpp; R[5,6] = kt_waste*Qp_waste/Kp_waste
-    R[6,5] = kt_waste*KG; R[6,0] = kp*param.cpc
+    R[5,0] = kp*cpp; R[5,6] = kt_waste*Qp_waste/(KG*Kp_waste)
+    R[6,5] = kt_waste; R[6,0] = kp*param.cpc
 
     # Get diagonal elements from normalization condition
     for i in range(7):

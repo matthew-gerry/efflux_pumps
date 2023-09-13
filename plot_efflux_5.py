@@ -74,7 +74,8 @@ def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, 
     ax1.text(7, 4.5, "(B)")
     ax1.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
 
-    ax2 = fig.add_axes([0.185,0.57,0.19,0.2])
+    ax2 = fig.add_axes([0.215,0.57,0.19,0.2])
+
     ax2.semilogx(KD_ratio_axis, Et_eV, '-k')
     ax2.text(0.008,0.16,"$E_t\:(eV)$")
 
