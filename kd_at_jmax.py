@@ -211,7 +211,7 @@ def plot_KD_at_Jmax_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis
 
 #### FUNCTIONS: 5-STATE MODEL ####
 
-def efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis):
+def efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=False):
     ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, UNICYCLIC WITH SEQUENTIAL UNBINDING '''
 
     efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
@@ -224,12 +224,12 @@ def efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis):
             cpp = cpp_axis[i]
 
             # Efflux as a function of KD at set cpp and cDc
-            efflux_vals[i,:,j] = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_axis, Qp, V_base, kappa, cDc, cpp)
+            efflux_vals[i,:,j] = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_axis, Qp, V_base, kappa, cDc, cpp, reversed_unbinding)
       
     return efflux_vals
 
 
-def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, filename):
+def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, filename, reversed_unbinding=False):
     ''' PLOT KD AT Jmax FOR THE THREE STATE MODEL AT THE PARAMETER VALUES SPECIFIED '''
 
     # Note data is saved in/loaded from the parent directory
@@ -241,7 +241,7 @@ def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis,
         '''
 
     except: # Otherwise calculate the efflux values
-        J = efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis)
+        J = efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding)
         np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
 
     KD_at_Jmax = get_KD_at_Jmax(J, KD_axis)
@@ -290,7 +290,7 @@ cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 param3 = Params3(1e8, 1e7, 1/(1e-8+1e-7+1e-7), 1e-5, 1e-7, 1, 1) # Create instantiation of Params3 class
 # plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
-plot_KD_at_Jmax_5(param3, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5")
+plot_KD_at_Jmax_5(param3, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=True)
 
 
 # param8 = Params8(1e6, 1e6, 1e6, 1e-11, 1e-7, [1,1], [0.1,0.1,0.1,0.1]) # Create instantiation of Params8 class

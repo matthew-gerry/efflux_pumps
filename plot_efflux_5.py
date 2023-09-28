@@ -19,7 +19,7 @@ import efflux_pumps as pump
 
 #### FUNCTIONS ####
 
-def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals):
+def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=False):
     ''' MEAN EFFLUX AS A FUNCTION OF DRUG BINDING AFFINITY '''
 
     mean_efflux = []
@@ -28,7 +28,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
 
-        mean_output = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_ratio*KD_axis, Kp_ratio*Kp, V_base, kappa, cDc, cpp)
+        mean_output = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_ratio*KD_axis, Kp_ratio*Kp, V_base, kappa, cDc, cpp, reversed_unbinding)
 
         mean_efflux.append(mean_output)
 
@@ -45,7 +45,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     plt.show()
 
 
-def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals):
+def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=False):
     ''' PLOT THE MEAN EFFLUX AS A FUNCTION OF THE RATIOS BETWEEN DRUG BINDING AFFINITIES '''
 
     mean_efflux = []
@@ -54,7 +54,7 @@ def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, 
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
 
-        mean_output = np.vectorize(pump.efflux_numerical_5)(param, KD, Kp, KD_ratio_axis*KD, Kp_ratio*Kp, V_base, kappa, cDc, cpp)
+        mean_output = np.vectorize(pump.efflux_numerical_5)(param, KD, Kp, KD_ratio_axis*KD, Kp_ratio*Kp, V_base, kappa, cDc, cpp, reversed_unbinding)
 
         mean_efflux.append(mean_output)
 
@@ -124,5 +124,5 @@ KD_ratio_axis = np.logspace(-2.5,4.5,50) # Ratio of outside to inside drug bindi
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals)
-plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
+plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)

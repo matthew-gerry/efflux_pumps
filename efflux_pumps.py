@@ -183,10 +183,13 @@ def entropy_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
 
 #### FUNCTIONS: 5-STATE MODEL ####
 
-def efflux_numerical_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
+def efflux_numerical_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp, reversed_unbinding=False):
     ''' GET MEAN EFFLUX RATE BY NUMERICALLY SOLVING FOR THE STEADY STATE, 5-STATE MODEL '''
     
-    R = rm.rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp)
+    if not reversed_unbinding:
+        R = rm.rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp)
+    else:
+        R = rm.rate_matrix_5a(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp)
 
     # Find steady state solution as eigenvector of R
     SS = rm.steady_state(R)

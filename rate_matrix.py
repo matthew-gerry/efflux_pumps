@@ -138,7 +138,7 @@ def cgf_8(R, dchi, chisteps):
 
 def rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
     '''
-    RATE MATRIX FOR THE EFFLUX PUMP, THREE-STATE KINETIC MODEL
+    RATE MATRIX FOR THE EFFLUX PUMP, FIVE-STATE KINETIC MODEL
     
     CALLS A Params3 OBJECT AS DEFINED IN params.py
     '''
@@ -164,6 +164,34 @@ def rate_matrix_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
         R[i,i] = -sum(R)[i]
 
     return R
+
+def rate_matrix_5a(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp):
+    '''
+    RATE MATRIX FOR FIVE-STATE CYCLE, REVERSED ORDER OF UNBINDING
+    '''
+
+    # Electric potential Boltzmann factor
+    KG = get_derived_params(param, cpp, V_base, kappa)[2]
+
+    # Forward rate constants
+    kD = param.rD*param.vD # Drug binding
+    kp = param.rp*param.vp # Proton binding
+    kt = param.rt/(1 + QD*Qp/(KG*KD*Kp))
+
+    R = np.zeros([5,5]) # Initialize rate matrix
+    # Insert transition rates
+    R[0,1] = kD*KD; R[4,3] = kD*QD
+    R[1,0] = kD*cDc; R[1,2] = kp*Kp
+    R[2,1] = kp*cpp; R[2,3] = kt*QD*Qp/(KG*KD*Kp)
+    R[3,2] = kt; R[4,0] = kp*param.cpc
+    R[0,4] = kp*Qp; R[3,4] = kD*param.cDo
+
+    # Get diagonal elements from normalization condition
+    for i in range(5):
+        R[i,i] = -sum(R)[i]
+
+    return R
+
 
 def cgf_5(R, dchi, chisteps):
     ''' CUMULANT GENERATING FUNCTION FOR THE FIVE-STATE MODEL, GIVEN A RATE MATRIX AND PARAMETERS DESCRIBING THE CHI AXIS '''
