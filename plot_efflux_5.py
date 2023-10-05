@@ -107,7 +107,7 @@ def plot_efflux_vs_D_2(param, KD_vals, Kp, KD_ratio, Kp_ratio, V_base, kappa, cD
     fig, ax = plt.subplots()
     for i in range(len(KD_vals)):
         ax.semilogy(cDc_axis_uM, mean_efflux[i],label="$K_D = "+str(int(KD_vals_uM[i]))+"\:\mu M$", linestyle = ls_list[i])
-    ax.annotate("Stronger binding",xy=(17.5,5e-3),xytext=(17.5,0.04),
+    ax.annotate("Weaker binding",xy=(17.5,5e-3),xytext=(17.5,0.04),
                 horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
     # ax.set_xlim([0, max(cDc_axis_uM)])
     ax.set_xlabel("$[D]_{in}\:(\mu M)$")
