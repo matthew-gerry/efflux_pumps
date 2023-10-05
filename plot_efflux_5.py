@@ -85,6 +85,41 @@ def plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, 
     
     plt.show()
 
+def plot_efflux_vs_D_2(param, KD_vals, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_axis, cpp, reversed_unbinding=False):
+    ''' MEAN EFFLUX AS A FUNCTION OF DRUG CONCENTRATION, VARYING KD
+        EQUAL BINDING AFFINITY FROM INSIDE AND OUT FOR SIMPLICITY '''
+
+
+    mean_efflux = []
+
+    # Evaluate efflux mean at each value of KD and cpp
+    for i in range(len(KD_vals)):
+        KD = KD_vals[i]
+        mean_output = np.vectorize(pump.efflux_numerical_5)(param, KD, Kp, KD*KD_ratio, Kp*Kp_ratio, V_base, kappa, cDc_axis, cpp, reversed_unbinding)
+
+        mean_efflux.append(mean_output)
+
+    # Plot mean values and variances side by side
+    cDc_axis_uM = 1e6*cDc_axis # KD_axis in uM
+    KD_vals_uM = [1e6*x for x in KD_vals]
+    # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
+
+    fig, ax = plt.subplots()
+    for i in range(len(KD_vals)):
+        ax.semilogy(cDc_axis_uM, mean_efflux[i],label="$K_D = "+str(int(KD_vals_uM[i]))+"\:\mu M$", linestyle = ls_list[i])
+    ax.annotate("Stronger binding",xy=(17.5,5e-3),xytext=(17.5,0.04),
+                horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
+    # ax.set_xlim([0, max(cDc_axis_uM)])
+    ax.set_xlabel("$[D]_{in}\:(\mu M)$")
+    ax.set_ylabel("$J\:(s^{-1})$")
+    ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    ax.set_yticks([5e-3, 1e-2, 2e-2, 5e-2, 1e-1, 2e-1,5e-1, 1])
+    ax.set_ylim([0.002,1.8])
+    ax.text(17, 1.2, "(A)")
+    ax.legend()
+    plt.show()
+
 
 #### GLOBAL VARIABLES ####
 
@@ -101,28 +136,33 @@ cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 
-# Variables - all functions
+# Variables - multiple functions
 Kp = 1e-6 # M, proton binding affinity from periplasm
 Kp_ratio = 1 # M, multiply by Kp to get proton binding affinity from cytoplasm
 V_base = -0.15 # V, base voltage
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 cDc = 1e-5 # M, cytoplasmic drug concentration
 
+KD_ratio = 10 # M, multiply by KD to get drug binding affinity from outside
 
 # Variables for plot_efflux_vs_KD
 KD_axis = np.logspace(-9, -0.5, 200) # M, drug binding affinity
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
-KD_ratio = 1 # M, multiply by KD to get drug binding affinity from outside
 
 # Variables for plot_efflux_vs_ratio
 KD = 1e-6 # M, drug binding affinity from inside
 KD_ratio_axis = np.logspace(-2.5,4.5,50) # Ratio of outside to inside drug binding affinities
 
+# Variable for plot_efflux_vs_KD_2
+cDc_axis = np.linspace(0,3.5e-5,100)
+KD_vals = [1e-6, 5e-6, 1e-5, 1e-4]
+cpp = 1e-7
 
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 
-plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
-plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
+# plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
+# plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
+plot_efflux_vs_D_2(param, KD_vals, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_axis, cpp, reversed_unbinding=False)

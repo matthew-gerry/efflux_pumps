@@ -211,7 +211,7 @@ def plot_KD_at_Jmax_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis
 
 #### FUNCTIONS: 5-STATE MODEL ####
 
-def efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=False):
+def efflux_matrix_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=False):
     ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, UNICYCLIC WITH SEQUENTIAL UNBINDING '''
 
     efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
@@ -224,12 +224,12 @@ def efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, r
             cpp = cpp_axis[i]
 
             # Efflux as a function of KD at set cpp and cDc
-            efflux_vals[i,:,j] = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_axis, Qp, V_base, kappa, cDc, cpp, reversed_unbinding)
+            efflux_vals[i,:,j] = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_ratio*KD_axis, Qp, V_base, kappa, cDc, cpp, reversed_unbinding)
       
     return efflux_vals
 
 
-def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, filename, reversed_unbinding=False):
+def plot_KD_at_Jmax_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, filename, reversed_unbinding=False):
     ''' PLOT KD AT Jmax FOR THE THREE STATE MODEL AT THE PARAMETER VALUES SPECIFIED '''
 
     # Note data is saved in/loaded from the parent directory
@@ -241,7 +241,7 @@ def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis,
         '''
 
     except: # Otherwise calculate the efflux values
-        J = efflux_matrix_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding)
+        J = efflux_matrix_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding)
         np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
 
     KD_at_Jmax = get_KD_at_Jmax(J, KD_axis)
@@ -255,12 +255,12 @@ def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis,
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.3, 0.5, 1, 2, 5])
+    ax.set_yticks([0.1, 0.2, 0.5, 1, 2])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
-    ax.text(0.85, 4, "(A)",fontsize='large')
+    ax.text(0.87, 1.5, "(B)",fontsize='large')
     plt.legend()
     plt.show()
 
@@ -270,8 +270,9 @@ def plot_KD_at_Jmax_5(param, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis,
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
 
 Kp = 1e-6 # M, proton binding affinity (all models)
-QD = 1e-5 # M, drug binding affinity from outside (five-state model)
+# QD = 1e-5 # M, drug binding affinity from outside (five-state model)
 Qp = 1e-6 # M, proton binding affinity from cytoplasm (five-state model)
+KD_ratio = 10 # Ratio of KD from outside to inside
 
 KDA = 1e-6 # M, drug binding affinity for cycle A (eight-state model)
 Kp_list = [1e-6, 1e-6, 1e-6, 1e-6] # M, proton binding affinities (eight-state model)
@@ -290,7 +291,7 @@ cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 param3 = Params3(1e8, 1e7, 1/(1e-8+1e-7+1e-7), 1e-5, 1e-7, 1, 1) # Create instantiation of Params3 class
 # plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
-plot_KD_at_Jmax_5(param3, KD_axis, Kp, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=True)
+plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
 
 
 # param8 = Params8(1e6, 1e6, 1e6, 1e-11, 1e-7, [1,1], [0.1,0.1,0.1,0.1]) # Create instantiation of Params8 class
