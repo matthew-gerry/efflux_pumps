@@ -9,6 +9,7 @@ Matthew Gerry, March 2023
 '''
 
 import numpy as np
+from os.path import exists
 import matplotlib
 matplotlib.use('tkAgg')
 from matplotlib import pyplot as plt
@@ -264,6 +265,40 @@ def plot_KD_at_Jmax_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals,
     plt.legend()
     plt.show()
 
+def plot_contour(filename, KD_axis, cpp_axis):
+    ''' PLOTS EFFLUX AS A FUNCTION OF BOTH [p] AND KD ON A CONTOUR PLOT USING DATA GENERATED WITH "EFFLUX_MATRIX" FUNCTION '''
+
+    # Load the data, break out of function execution if not present
+    try:
+        J = np.load("../"+filename+".npy")
+        ''' ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION MATCH THOSE USED TO CALCULATE THE DATA '''
+    except:
+        print(filename+".npy not found in parent directory. Generate data using efflux_matrix_5")
+        return
+
+    KD_at_Jmax = get_KD_at_Jmax(J, KD_axis) # Get KD_at_Jmax to superpose on map
+
+    KD_micro = 1e6*KD_axis
+    cpp_micro = 1e6*cpp_axis
+
+    # Prepare grid for plotting
+    [X,Y] = np.meshgrid(KD_micro, cpp_micro)
+
+    fig, ax = plt.subplots()
+
+    sctr = ax.scatter(X,Y,c=J,marker='x')
+    cbar = fig.colorbar(sctr)
+    sctr2 = ax.plot(1e6*KD_at_Jmax[0,:],cpp_micro,'-r')
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.set_xlim(min(KD_micro),max(KD_micro))
+    ax.set_ylim(min(cpp_micro),max(cpp_micro))
+    ax.set_xlabel("$K_D\;(\mu M)$")
+    ax.set_ylabel("$[p]_{per}\;(\mu M)$")
+    cbar.ax.set_ylabel("$J\:(s^{-1})$")
+
+    plt.show()
+
 
 #### GLOBAL VARIABLES ####
 
@@ -280,10 +315,16 @@ Kp_list = [1e-6, 1e-6, 1e-6, 1e-6] # M, proton binding affinities (eight-state m
 V_base = -0.15 # V, base voltage
 kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 
-# Axes and values for comutations, plotting
+# Axes and values for comutations, plotting of KD_at_Jmax
 KD_axis = np.logspace(-8,2,1500) # M, drug binding affinity
 cpp_axis = np.logspace(-7,-5,400) # M, periplasmic proton concentration
 cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
+
+# Axes for plotting color map
+KD_axis_map = np.logspace(-8.5,-3,250) # M, drug binding affinity
+cpp_axis_map = np.logspace(-7,-5,225) # M, periplasmic proton concentration
+cDc_vals_map = np.array([1e-5]) # M, cytoplasmic drug concentration (just a single value)
+filename_map_5 = "J_map_5"
 
 
 #### MAIN CALLS ####
@@ -291,7 +332,17 @@ cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 param3 = Params3(1e8, 1e7, 1/(1e-8+1e-7+1e-7), 1e-5, 1e-7, 1, 1) # Create instantiation of Params3 class
 # plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
-plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
+# plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
+
+
+# Prepare data for contour plot if necessary, then create plot
+data_exists = exists("../"+filename_map_5+".npy")
+if data_exists:
+    plot_contour(filename_map_5, KD_axis_map, cpp_axis_map)
+else:
+    J_map_5 = efflux_matrix_5(param3, KD_axis_map, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals_map, cpp_axis_map, reversed_unbinding=False)
+    np.save("../"+filename_map_5, J_map_5)
+    plot_contour(filename_map_5, KD_axis_map, cpp_axis_map)
 
 
 # param8 = Params8(1e6, 1e6, 1e6, 1e-11, 1e-7, [1,1], [0.1,0.1,0.1,0.1]) # Create instantiation of Params8 class
