@@ -320,10 +320,14 @@ KD_axis = np.logspace(-8,2,1500) # M, drug binding affinity
 cpp_axis = np.logspace(-7,-5,400) # M, periplasmic proton concentration
 cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 
-# Axes for plotting color map
-KD_axis_map = np.logspace(-8.5,-3,250) # M, drug binding affinity
+# Axes for plotting colour maps
 cpp_axis_map = np.logspace(-7,-5,225) # M, periplasmic proton concentration
 cDc_vals_map = np.array([1e-5]) # M, cytoplasmic drug concentration (just a single value)
+
+KD_axis_map_3 = np.logspace(-6.5,-1,250)
+filename_map_3 = "J_map_3"
+
+KD_axis_map_5 = np.logspace(-8.5,-3,250) # M, drug binding affinity
 filename_map_5 = "J_map_5"
 
 
@@ -334,15 +338,28 @@ param3 = Params3(1e8, 1e7, 1/(1e-8+1e-7+1e-7), 1e-5, 1e-7, 1, 1) # Create instan
 # plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
 
+contour_3state = True
+if contour_3state:
+    # Prepare data for 5-state model contour plot if necessary, then create plot
+    data_exists = exists("../"+filename_map_3+".npy")
+    if data_exists:
+        plot_contour(filename_map_3, KD_axis_map_3, cpp_axis_map)
+    else:
+        J_map_3 = efflux_matrix_3(param3, KD_axis_map_3, Kp, V_base, kappa, cDc_vals_map, cpp_axis_map)
+        np.save("../"+filename_map_3, J_map_3)
+        plot_contour(filename_map_3, KD_axis_map_3, cpp_axis_map)
 
-# Prepare data for contour plot if necessary, then create plot
-data_exists = exists("../"+filename_map_5+".npy")
-if data_exists:
-    plot_contour(filename_map_5, KD_axis_map, cpp_axis_map)
-else:
-    J_map_5 = efflux_matrix_5(param3, KD_axis_map, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals_map, cpp_axis_map, reversed_unbinding=False)
-    np.save("../"+filename_map_5, J_map_5)
-    plot_contour(filename_map_5, KD_axis_map, cpp_axis_map)
+
+contour_5state = False
+if contour_5state:
+    # Prepare data for 5-state model contour plot if necessary, then create plot
+    data_exists = exists("../"+filename_map_5+".npy")
+    if data_exists:
+        plot_contour(filename_map_5, KD_axis_map_5, cpp_axis_map)
+    else:
+        J_map_5 = efflux_matrix_5(param3, KD_axis_map_5, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals_map, cpp_axis_map, reversed_unbinding=False)
+        np.save("../"+filename_map_5, J_map_5)
+        plot_contour(filename_map_5, KD_axis_map_5, cpp_axis_map)
 
 
 # param8 = Params8(1e6, 1e6, 1e6, 1e-11, 1e-7, [1,1], [0.1,0.1,0.1,0.1]) # Create instantiation of Params8 class
