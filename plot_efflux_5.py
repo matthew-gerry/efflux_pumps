@@ -28,7 +28,14 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     for i in range(len(cpp_vals)):
         cpp = cpp_vals[i]
 
+        mean_output = []
+        
         mean_output = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_ratio*KD_axis, Kp_ratio*Kp, V_base, kappa, cDc, cpp, reversed_unbinding)
+        # for j in range(len(KD_axis)):
+        #     KD = KD_axis[j]
+
+        #     output_val = pump.efflux_numerical_5(param, KD, Kp, KD_ratio*KD, Kp_ratio*Kp, V_base, kappa, cDc, cpp, reversed_unbinding)
+        #     mean_output.append(output_val)
 
         mean_efflux.append(mean_output)
 
@@ -115,7 +122,7 @@ def plot_efflux_vs_D_2(param, KD_vals, Kp, KD_ratio, Kp_ratio, V_base, kappa, cD
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.set_yticks([5e-3, 1e-2, 2e-2, 5e-2, 1e-1, 2e-1,5e-1, 1])
-    ax.set_ylim([0.002,1.8])
+    # ax.set_ylim([0.002,1.8])
     ax.text(17, 1.2, "(A)")
     ax.legend()
     plt.show()
@@ -127,11 +134,11 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 
 # Parameter values
-rD = 1e8 # 1/s
-rp = 1e7 # 1/s
-rt = 1e7 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
+rD = 1e6 # 1/s
+rp = 1e12 # 1/s
+rt = 1e6 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
-vp = 1 # 1/M
+vp = 1e-6 # 1/M
 cDo = 1e-5 # M
 cpc = 1e-7 # M
 
@@ -140,7 +147,8 @@ cpc = 1e-7 # M
 Kp = 1e-6 # M, proton binding affinity from periplasm
 Kp_ratio = 1 # M, multiply by Kp to get proton binding affinity from cytoplasm
 V_base = -0.15 # V, base voltage
-kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
+# kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
+kappa = 0
 cDc = 1e-5 # M, cytoplasmic drug concentration
 
 KD_ratio = 10 # M, multiply by KD to get drug binding affinity from outside
@@ -163,6 +171,6 @@ cpp = 1e-7
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
+plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
 # plot_efflux_vs_ratio(param, KD, Kp, KD_ratio_axis, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
-plot_efflux_vs_D_2(param, KD_vals, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_axis, cpp, reversed_unbinding=False)
+# plot_efflux_vs_D_2(param, KD_vals, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_axis, cpp, reversed_unbinding=False)
