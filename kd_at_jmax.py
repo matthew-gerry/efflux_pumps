@@ -103,17 +103,17 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     # Plot KD at Jmax
     fig, ax = plt.subplots()
     for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.loglog(1e6*cpp_axis, 1e6*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5])
+    ax.set_yticks([0.2, 0.5, 1, 2, 5])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$K_D$ at $J_{max}$ $(mM)$")    
+    ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
     ax.text(0.9,3.5,"(B)",fontsize='large')
     plt.legend()
     plt.show()
@@ -304,6 +304,15 @@ def plot_contour(filename, KD_axis, cpp_axis):
 
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
 
+# Parameter values
+rD = 1e6 # 1/s
+rp = 1e12 # 1/s
+rt = 1e17 # 1/s
+vD = 1 # 1/M
+vp = 1e-6 # 1/M
+cDo = 1e-5 # M
+cpc = 1e-7 # M
+
 Kp = 1e-6 # M, proton binding affinity (all models)
 # QD = 1e-5 # M, drug binding affinity from outside (five-state model)
 Qp = 1e-6 # M, proton binding affinity from cytoplasm (five-state model)
@@ -312,11 +321,12 @@ KD_ratio = 10 # Ratio of KD from outside to inside
 KDA = 1e-6 # M, drug binding affinity for cycle A (eight-state model)
 Kp_list = [1e-6, 1e-6, 1e-6, 1e-6] # M, proton binding affinities (eight-state model)
 
-V_base = -0.15 # V, base voltage
-kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
+V_base = -np.log(100)*kB*T/q # V, base voltage, about -110 mV 
+# kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
+kappa = 0
 
 # Axes and values for comutations, plotting of KD_at_Jmax
-KD_axis = np.logspace(-8,2,1500) # M, drug binding affinity
+KD_axis = np.logspace(-9,2.5,1500) # M, drug binding affinity
 cpp_axis = np.logspace(-7,-5,400) # M, periplasmic proton concentration
 cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 
@@ -333,8 +343,8 @@ filename_map_5 = "J_map_5"
 
 #### MAIN CALLS ####
 
-param3 = Params3(1e8, 1e7, 1/(1e-8+1e-7+1e-7), 1e-5, 1e-7, 1, 1) # Create instantiation of Params3 class
-# plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
+param3 = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 class
+plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
 

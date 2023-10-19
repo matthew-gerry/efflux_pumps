@@ -202,7 +202,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e6 # 1/s
 rp = 1e12 # 1/s
-rt = 1e16 # 1/s
+rt = 1e17 # 1/s
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
@@ -211,14 +211,15 @@ cpc = 1e-7 # M
 
 # Variables - for all functions
 Kp = 1e-6 # M, proton binding affinity
-V_base = -0.15 # V, base voltage (except plot_specificity)
+# V_base = -0.15 # V, base voltage (except plot_specificity)
+V_base = -np.log(100)*kB*T/q  # V, base voltage, about -110 mV (except plot_specificity)
 # kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 kappa = 0
 KD = 1e-6 # M, drug binding affininty (except plot_efflux_vs_KD)
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
-KD_axis = np.logspace(-10, -3, 200) # M, drug binding affinity
+KD_axis = np.logspace(-9, -2.5, 200) # M, drug binding affinity
 cDc_axis = np.linspace(0,5e-5,100) # M, cytoplasmic drug concentration
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
@@ -238,6 +239,7 @@ cpp = 1e-6
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
+print(V_base)
 plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)

@@ -140,19 +140,20 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
 #### GLOBAL VARIABLES ####
 
 # Parameter values
-rD = 1e8 # 1/s
-rp = 1e7 # 1/s
-rt = 1e7 # 1/s
+rD = 1e6 # 1/s
+rp = 1e12 # 1/s
+rt = 1e6 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
-vp = 1 # 1/M
+vp = 1e-6 # 1/M
 cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 KD = 1e-6
 Kp_pump = 1e-6 # M, primary proton binding affinity for pumping cycle
 Kp_waste = 1e-6 # M, primary proton binding affinity for waste cycle
-V_base = -0.15 # V, base voltage (except plot_specificity)
-kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
+V_base = -np.log(100)*kB*T/q # V, base voltage, about -110 mV
+# kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
+kappa = 0
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # Plot axis and parameters defining different curves

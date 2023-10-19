@@ -146,7 +146,7 @@ cpc = 1e-7 # M
 # Variables - multiple functions
 Kp = 1e-6 # M, proton binding affinity from periplasm
 Kp_ratio = 1 # M, multiply by Kp to get proton binding affinity from cytoplasm
-V_base = -0.15 # V, base voltage
+V_base = -np.log(100)*kB*T/q # V, base voltage, about -110 mV
 # kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 kappa = 0
 cDc = 1e-5 # M, cytoplasmic drug concentration
