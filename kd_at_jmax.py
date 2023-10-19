@@ -132,7 +132,7 @@ def plot_logwidth_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, filen
 
     except: # Otherwise calculate the efflux values
         J = efflux_matrix_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis)
-        np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
+        np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecutive runs)
 
     J_logwidth = get_logwidth(J, KD_axis)
 

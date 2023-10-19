@@ -226,6 +226,42 @@ def plot_efflux_vs_D_over_KD(param, KD_vals, Kp, V_base, kappa, cDc_over_KD_axis
     ax.legend()
     plt.show()
 
+def contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis, filename):
+    ''' CONTOUR PLOT OF THE EFFLUX AS A FUNCTION OF BOTH [p] AND THE MAGNITUDE OF V '''
+
+       
+    # Note data is saved in/loaded from the parent directory
+    try: # Load data if saved
+        J_vals = np.load("../"+filename+".npy")
+        '''
+        IF LOADING DATA, ENSURE THAT V_axis AND cpp_axis FED INTO THIS FUNCTION
+        MATCH THOSE USED TO CALCULATE DATA
+        '''
+    except: # Otherwise calculate and save the efflux values
+        J_vals = np.zeros([len(V_abs_axis), len(cpp_axis)])
+
+        for i in range(len(V_abs_axis)):
+            V_base = -V_abs_axis[i]
+
+            J_vals[i,:] = np.vectorize(pump.efflux_MM_3)(param, KD, Kp, V_base, kappa, cDc, cpp_axis)
+        np.save("../"+filename+".npy", J_vals) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecutive runs)
+
+    fig, ax = plt.subplots()
+
+    cpp_micro = 1e6*cpp_axis
+    V_abs_milli = 1e3*V_abs_axis
+    [X, Y] = np.meshgrid(cpp_micro, V_abs_milli)
+
+    sctr = ax.scatter(X,Y,c=J_vals,marker='x')
+    cbar = fig.colorbar(sctr)
+    # ax.set_xscale('log')
+    # ax.set_yscale('log')
+    ax.set_xlabel("$[p]_{per}\;(\mu M)$")
+    ax.set_ylabel("$|V|\;(mV)$")
+    cbar.ax.set_ylabel("$J\:(s^{-1})$")
+
+    plt.show()
+
 #### GLOBAL VARIABLES ####
 
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
@@ -256,7 +292,7 @@ cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentratio
 
 # For plot_KM and plot_specificity
 KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
-cpp_axis = np.logspace(-7,-5)
+cpp_axis = np.logspace(-7,-5, 200)
 KG_base_vals = [40, 60, 80, 100]
 V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
@@ -268,14 +304,18 @@ cpp = 1e-6
 # For plot_efflux_vs_D_over_KD
 cDc_over_KD_axis = np.logspace(-2.2,3.5,100)
 
+# For contour_efflux_p_V
+V_abs_axis = np.linspace(0.001, 0.3, 225)
+cpp_axis_2 = np.linspace(1e-7, 3e-6, 200)
+
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-print(V_base)
 # plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
-plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
+# plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
+contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
