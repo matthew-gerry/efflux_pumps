@@ -193,6 +193,38 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
     plt.legend()
     plt.show()
 
+def plot_efflux_vs_D_over_KD(param, KD_vals, Kp, V_base, kappa, cDc_over_KD_axis, cpp):
+    ''' MEAN EFFLUX AS A FUNCTION OF DRUG CONCENTRATION OVER KD, VARYING KD '''
+
+    mean_efflux = []
+
+    # Evaluate efflux mean at each value of KD and cpp
+    for i in range(len(KD_vals)):
+        KD = KD_vals[i]
+        cDc_axis = KD*cDc_over_KD_axis
+
+        mean_output = np.vectorize(pump.efflux_MM_3)(param, KD, Kp, V_base, kappa, cDc_axis, cpp)
+
+        mean_efflux.append(mean_output)
+
+    # Plot mean values and variances side by side
+    KD_vals_uM = [1e6*x for x in KD_vals]
+    # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
+
+    fig, ax = plt.subplots()
+    for i in range(len(KD_vals)):
+        ax.semilogx(cDc_over_KD_axis, mean_efflux[i],label="$K_D = "+str(int(KD_vals_uM[i]))+"\:\mu M$", linestyle = ls_list[i])
+    # ax.annotate("Stronger binding",xy=(25,3e-4),xytext=(25,1.5e-3),
+                # horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
+    ax.set_xlim([min(cDc_over_KD_axis), max(cDc_over_KD_axis)])
+    ax.set_ylim([0,1.1])
+    ax.set_xlabel("$[D]_{in}/K_D$")
+    ax.set_ylabel("$J\:(s^{-1})$")
+    ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    # ax.set_yticks([5e-4, 1e-3, 2e-3, 5e-3, 1e-2])
+    ax.legend()
+    plt.show()
 
 #### GLOBAL VARIABLES ####
 
@@ -207,7 +239,6 @@ vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
 cpc = 1e-7 # M
-
 
 # Variables - for all functions
 Kp = 1e-6 # M, proton binding affinity
@@ -234,14 +265,17 @@ cDc_axis_2 = np.linspace(0,3.5e-5,100)
 KD_vals_2 = [1e-6, 2e-6, 5e-6, 1e-5]
 cpp = 1e-6
 
+# For plot_efflux_vs_D_over_KD
+cDc_over_KD_axis = np.logspace(-2.2,3.5,100)
 
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 print(V_base)
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
