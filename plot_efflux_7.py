@@ -141,7 +141,7 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
 
 # Parameter values
 rD = 1e6 # 1/s
-rp = 1e12 # 1/s
+rp = 1e15 # 1/s
 rt = 1e6 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
@@ -160,7 +160,7 @@ cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 KD_axis = np.logspace(-9, -2, 200)
 Kp_list = [Kp_pump, Kp_waste]
 Qp_list = Kp_list
-cpp_vals = [1e-7, 1e-6, 1e-5]
+cpp_vals = [1e-7, 5e-6, 1e-6]
 KD_ratio = 1
 
 
@@ -169,4 +169,4 @@ KD_ratio = 1
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
 plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
-plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)

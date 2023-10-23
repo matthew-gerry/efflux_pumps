@@ -306,8 +306,8 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 # Parameter values
 rD = 1e6 # 1/s
-rp = 1e12 # 1/s
-rt = 1e17 # 1/s
+rp = 1e15 # 1/s
+rt = 1e18 # 1/s
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
@@ -348,7 +348,7 @@ plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jm
 # plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
 
-contour_3state = True
+contour_3state = False
 if contour_3state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
     data_exists = exists("../"+filename_map_3+".npy")
