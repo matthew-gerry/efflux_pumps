@@ -228,8 +228,7 @@ def plot_efflux_vs_D_over_KD(param, KD_vals, Kp, V_base, kappa, cDc_over_KD_axis
 
 def contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis, filename):
     ''' CONTOUR PLOT OF THE EFFLUX AS A FUNCTION OF BOTH [p] AND THE MAGNITUDE OF V '''
-
-       
+   
     # Note data is saved in/loaded from the parent directory
     try: # Load data if saved
         J_vals = np.load("../"+filename+".npy")
@@ -248,15 +247,15 @@ def contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis, filename
 
     fig, ax = plt.subplots()
 
-    cpp_micro = 1e6*cpp_axis
+    dmu_p_axis = 6.24e21*kB*T*np.log(cpp_axis/param.cpc) # Will plot against the proton chem potential difference (in meV), not the concentration
     V_abs_milli = 1e3*V_abs_axis
-    [X, Y] = np.meshgrid(cpp_micro, V_abs_milli)
+    [X, Y] = np.meshgrid(dmu_p_axis, V_abs_milli)
 
     sctr = ax.scatter(X,Y,c=J_vals,marker='x')
     cbar = fig.colorbar(sctr)
     # ax.set_xscale('log')
     # ax.set_yscale('log')
-    ax.set_xlabel("$[p]_{per}\;(\mu M)$")
+    ax.set_xlabel("$\Delta\mu_{protons}\;(meV)$")
     ax.set_ylabel("$|V|\;(mV)$")
     cbar.ax.set_ylabel("$J\:(s^{-1})$")
 
@@ -305,17 +304,17 @@ cpp = 1e-6
 cDc_over_KD_axis = np.logspace(-2.2,3.5,100)
 
 # For contour_efflux_p_V
-V_abs_axis = np.linspace(0.001, 0.3, 225)
-cpp_axis_2 = np.linspace(1e-7, 3e-6, 200)
+V_abs_axis = np.linspace(0.001, 0.15, 225)
+cpp_axis_2 = np.logspace(-7, -5, 200)
 
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
-# contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
+contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
