@@ -109,7 +109,7 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.2, 0.5, 1, 2, 5])
+    ax.set_yticks([3, 5, 10, 30, 50])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")

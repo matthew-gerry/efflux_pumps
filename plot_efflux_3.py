@@ -106,7 +106,10 @@ def plot_efflux_vs_D_2(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
     ax.set_ylabel("$J\:(s^{-1})$")
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    ax.set_yticks([5e-4, 1e-3, 2e-3, 5e-3, 1e-2])
+    # ax.set_yticks([5e-4, 1e-3, 2e-3, 5e-3, 1e-2])
+    # ax.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20])
+    # ax.set_xlim([0,35])
+    # ax.set_ylim([0.5,50])
     ax.legend()
     plt.show()
 
@@ -268,7 +271,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 # Parameter values
 rD = 1e6 # 1/s
-rp = 1e15 # 1/s
+rp = 1e14 # 1/s
 rt = 1e18 # 1/s
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
@@ -290,15 +293,15 @@ cDc_axis = np.linspace(0,5e-5,100) # M, cytoplasmic drug concentration
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
 # For plot_KM and plot_specificity
-KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
+# KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
 cpp_axis = np.logspace(-7,-5, 200)
 KG_base_vals = [40, 60, 80, 100]
 V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 # For plot_efflux_vs_D_2
-cDc_axis_2 = np.linspace(0,3.5e-5,100)
-KD_vals_2 = [1e-6, 2e-6, 5e-6, 1e-5]
-cpp = 1e-6
+cDc_axis_2 = np.linspace(0,4e-5,100)
+KD_vals_2 = [5e-6, 1e-5, 5e-5, 1e-4]
+cpp = 3e-7
 
 # For plot_efflux_vs_D_over_KD
 cDc_over_KD_axis = np.logspace(-2.2,3.5,100)
@@ -313,8 +316,8 @@ param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 
 
 # plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-# plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
+# plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
-# plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
-contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
+# contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
