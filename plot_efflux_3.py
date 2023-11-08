@@ -78,6 +78,7 @@ def plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals):
     ax.legend()
     plt.show()
 
+
 def plot_efflux_vs_D_2(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
     ''' MEAN EFFLUX AS A FUNCTION OF DRUG CONCENTRATION, VARYING KD '''
 
@@ -98,20 +99,20 @@ def plot_efflux_vs_D_2(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
     fig, ax = plt.subplots()
     for i in range(len(KD_vals)):
         ax.semilogy(cDc_axis_uM, mean_efflux[i],label="$K_D = "+str(int(KD_vals_uM[i]))+"\:\mu M$", linestyle = ls_list[i])
-    ax.annotate("Stronger binding",xy=(25,3e-4),xytext=(25,1.5e-3),
-                horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))
     # ax.set_xlim([0, max(cDc_axis_uM)])
     # ax.set_ylim([0,6.5e-4])
     ax.set_xlabel("$[D]_{in}\:(\mu M)$")
     ax.set_ylabel("$J\:(s^{-1})$")
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    # ax.set_yticks([5e-4, 1e-3, 2e-3, 5e-3, 1e-2])
-    # ax.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20])
-    # ax.set_xlim([0,35])
-    # ax.set_ylim([0.5,50])
+    ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
+    ax.set_xlim([0,40])
+    ax.annotate("Stronger binding",xy=(20,15), xytext=(20, 1.5),
+            horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))    
+    ax.text(2.5,8,"A",fontsize=16)
     ax.legend()
     plt.show()
+
 
 def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ''' KM AS A FUNCTION OF PROTON CONCENTRATION '''
@@ -119,11 +120,14 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     KM_vals = [] # Initialize list of lists of KM values
     KMsimp_vals = [] # Initialize list of lists of KM values using simplified expression
 
+    KG = np.exp(-param.q*V_base/(param.kB*param.T)) # KG at V_base (exact if kappa=0)
+
     # Evaluate KM at each value of cpp
     for i in range(len(KD_vals)):
         KD = KD_vals[i]
         KM_output = np.vectorize(pump.KM_3)(param, KD, Kp, V_base, kappa, cpp_axis) # Full function
-        KMsimp_output = KD*Kp*np.power(cpp_axis + Kp, -1) # Simplified expression
+        # KMsimp_output = KD*Kp*np.power(cpp_axis + Kp, -1) # Simplified expression
+        KMsimp_output = KD*(((param.vp*Kp*KG*param.rt/param.rD) + 1)*cpp_axis + 2 + param.vD*KD*KG*param.rt/param.rp)/(cpp_axis + 2*Kp)
 
         KM_vals.append(KM_output)
         KMsimp_vals.append(KMsimp_output)
@@ -196,6 +200,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
     plt.legend()
     plt.show()
 
+
 def plot_efflux_vs_D_over_KD(param, KD_vals, Kp, V_base, kappa, cDc_over_KD_axis, cpp):
     ''' MEAN EFFLUX AS A FUNCTION OF DRUG CONCENTRATION OVER KD, VARYING KD '''
 
@@ -228,6 +233,7 @@ def plot_efflux_vs_D_over_KD(param, KD_vals, Kp, V_base, kappa, cDc_over_KD_axis
     # ax.set_yticks([5e-4, 1e-3, 2e-3, 5e-3, 1e-2])
     ax.legend()
     plt.show()
+
 
 def contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis, filename):
     ''' CONTOUR PLOT OF THE EFFLUX AS A FUNCTION OF BOTH [p] AND THE MAGNITUDE OF V '''
@@ -294,7 +300,7 @@ cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentratio
 
 # For plot_KM and plot_specificity
 # KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
-cpp_axis = np.logspace(-7,-5, 200)
+cpp_axis = np.logspace(-7,-5.5, 200)
 KG_base_vals = [40, 60, 80, 100]
 V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
@@ -316,8 +322,8 @@ param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 
 
 # plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-# plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
+plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
-plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+# plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
