@@ -69,7 +69,10 @@ def KM_3(param, KD, Kp, V_base, kappa, cpp):
     C1 = 1 + param.vD*KD*KG/Rp + param.vD*param.vp*KD*Kp*KG
     KM = (KD*(cpp*param.vp*KG/RD + C1) + param.cDo*param.cpc*(param.vD*KD/Rp + param.vp*(Kp + cpp)/RD)/Kp)/(cpp*Z/Kp + C1)
 
-    return KM
+    # Approximate effective KM with experimentally relevant parameter ranges taken into account
+    KM_simp = KD*(param.rt*param.vp*Kp*KG*cpp/(Kp*param.rD) + C1)/(cpp/Kp + C1)
+
+    return KM, KM_simp
 
 
 def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
@@ -84,7 +87,7 @@ def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 
     Z = 1 + param.vD*param.vp*KD*Kp*KG # A partition function for states 1 and 3
     Kbeta = Kp*(1 + param.vD*KD*KG/(Rp*Z)) # Michaelis-Menten constants
-    KM = KM_3(param, KD, Kp, V_base, kappa, cpp)
+    KM = KM_3(param, KD, Kp, V_base, kappa, cpp)[0]
 
     alpha = 1 - param.cDo*param.cpc/(cDc*cpp*KG) # Efficiency factor (1 in the irreversible limit)
 
@@ -96,7 +99,7 @@ def spec_3(param, KD, Kp, V_base, kappa, cDc, cpp):
 def efflux_MM_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     ''' EFFLUX CALCULATED FROM THE MICHAELIS-MENTEN LIKE EXPRESSION DERIVED FOR THE REVERSIBLE CASE, THREE-STATE MODEL '''
 
-    KM = KM_3(param, KD, Kp, V_base, kappa, cpp) # Michaelis-Menten constant
+    KM = KM_3(param, KD, Kp, V_base, kappa, cpp)[0] # Michaelis-Menten constant
     S = spec_3(param, KD, Kp, V_base, kappa, cDc, cpp) # Specificity
 
     J = cDc*KM*S/(cDc + KM) # efflux

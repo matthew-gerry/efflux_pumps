@@ -125,9 +125,8 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     # Evaluate KM at each value of cpp
     for i in range(len(KD_vals)):
         KD = KD_vals[i]
-        KM_output = np.vectorize(pump.KM_3)(param, KD, Kp, V_base, kappa, cpp_axis) # Full function
-        # KMsimp_output = KD*Kp*np.power(cpp_axis + Kp, -1) # Simplified expression
-        KMsimp_output = KD*(((param.vp*Kp*KG*param.rt/param.rD) + 1)*cpp_axis + 2 + param.vD*KD*KG*param.rt/param.rp)/(cpp_axis + 2*Kp)
+        KM_output = np.vectorize(pump.KM_3)(param, KD, Kp, V_base, kappa, cpp_axis)[0] # Full function
+        KMsimp_output = np.vectorize(pump.KM_3)(param, KD, Kp, V_base, kappa, cpp_axis)[1] # Approximate expression
 
         KM_vals.append(KM_output)
         KMsimp_vals.append(KMsimp_output)
@@ -143,11 +142,14 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
+    ax.set_xlim([0.1,10])
+    ax.set_ylim([0,1000])
+
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_M$ $(\mu M)$")
-    ax.text(0.9,4.8,"(A)",fontsize='large')
-    plt.legend()
+    ax.text(0.13,850,"B",fontsize=16)
+    # plt.legend()
     plt.show()
 
 
@@ -183,7 +185,7 @@ def plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis):
 
     fig, ax = plt.subplots()
     for i in range(len(V_base_vals)):
-        ax.semilogx(1e6*cpp_axis, Ssimp_micro[i], label="$K_G|_{\Delta\mu_p=0} =$ "+str(int(round(KG_base_vals[i]))), linestyle=ls_list[i],linewidth=3)
+        ax.semilogx(1e6*cpp_axis, S_micro[i], label="$K_G|_{\Delta\mu_p=0} =$ "+str(int(round(KG_base_vals[i]))), linestyle=ls_list[i],linewidth=3)
     for i in range(len(V_base_vals)):
         ax.semilogx(1e6*cpp_axis, Ssimp_micro[i], "--k", linewidth=1)
 
@@ -281,7 +283,7 @@ rp = 1e14 # 1/s
 rt = 1e18 # 1/s
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
-cDo = 1e-5 # M
+cDo = 1e-6 # M
 cpc = 1e-7 # M
 
 # Variables - for all functions
@@ -300,7 +302,7 @@ cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentratio
 
 # For plot_KM and plot_specificity
 # KD_vals = [1e-6, 2e-6, 4e-6, 6e-6]
-cpp_axis = np.logspace(-7,-5.5, 200)
+cpp_axis = np.logspace(-7,-5, 200)
 KG_base_vals = [40, 60, 80, 100]
 V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
