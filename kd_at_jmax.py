@@ -105,6 +105,9 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
         ax.loglog(1e6*cpp_axis, 1e6*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
+    ax.set_xlim([1e6*min(cpp_axis), 1e6*max(cpp_axis)])
+    ax.set_ylim([1,15])
+
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -114,8 +117,8 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
-    ax.text(0.9,3.5,"(B)",fontsize='large')
-    plt.legend()
+    ax.text(0.15,13,"B",fontsize=18)
+    plt.legend(loc="lower right")
     plt.show()
 
 
@@ -332,7 +335,7 @@ cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 
 # Axes for plotting colour maps
 cpp_axis_map = np.logspace(-7,-5,225) # M, periplasmic proton concentration
-cDc_vals_map = np.array([1e-5]) # M, cytoplasmic drug concentration (just a single value)
+cDc_vals_map = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration (just a single value)
 
 KD_axis_map_3 = np.logspace(-6.5,-1,250)
 filename_map_3 = "J_map_3"

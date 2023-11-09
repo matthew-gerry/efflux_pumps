@@ -38,13 +38,13 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    # plt.ylim(0,1.3e-2)
-    # plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
+    plt.ylim(0,9)
+    plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
-    plt.text(10**(2.5),1.2e-2,"(A)",fontsize='large')
+    plt.text(10**(-2.5),8,"A",fontsize=18)
     plt.show()
 
 
@@ -283,7 +283,7 @@ rp = 1e14 # 1/s
 rt = 1e18 # 1/s
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
-cDo = 1e-6 # M
+cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 # Variables - for all functions
@@ -296,7 +296,7 @@ KD = 1e-6 # M, drug binding affininty (except plot_efflux_vs_KD)
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
-KD_axis = np.logspace(-9, -2.5, 200) # M, drug binding affinity
+KD_axis = np.logspace(-9, -1, 200) # M, drug binding affinity
 cDc_axis = np.linspace(0,5e-5,100) # M, cytoplasmic drug concentration
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
@@ -322,9 +322,9 @@ cpp_axis_2 = np.logspace(-7, -5, 200)
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
+# plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
