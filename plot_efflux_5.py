@@ -135,7 +135,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 # Parameter values
 rD = 1e6 # 1/s
-rp = 1e15 # 1/s
+rp = 1e14 # 1/s
 rt = 1e6 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
 vp = 1e-6 # 1/M

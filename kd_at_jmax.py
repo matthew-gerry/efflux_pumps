@@ -347,8 +347,8 @@ filename_map_5 = "J_map_5"
 #### MAIN CALLS ####
 
 param3 = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 class
-plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
-# plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
+# plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
+plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
 # plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
 
 contour_3state = False
