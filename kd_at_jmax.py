@@ -18,7 +18,8 @@ import matplotlib.ticker as mtick
 from parameters import *
 import efflux_pumps as pump
 
-#### FUNCTION: GENERAL ####
+
+#### FUNCTIONS: GENERAL ####
 
 def get_KD_at_Jmax(efflux_data, KD_axis):
     ''' 
@@ -63,7 +64,8 @@ def get_logwidth(efflux_data, KD_axis):
 
     return J_logwidth
 
-#### FUNCTIONS: THREE-STATE MODEL ####
+
+#### FUNCTIONS: DATA GENERATION FOR EACH MODEL ####
 
 def efflux_matrix_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis):
     ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, UNICYCLIC '''
@@ -82,21 +84,53 @@ def efflux_matrix_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis):
       
     return efflux_vals
 
+def efflux_matrix_5(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=True):
+    ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, UNICYCLIC WITH SEQUENTIAL UNBINDING '''
 
-def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, filename):
-    ''' PLOT KD AT Jmax FOR THE THREE STATE MODEL AT THE PARAMETER VALUES SPECIFIED '''
+    efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
+
+    # Evaluate mean efflux at each KD-cpp pair, for each drug concentration
+    for j in range(len(cDc_vals)):
+        cDc = cDc_vals[j]
+
+        for i in range(len(cpp_axis)):
+            cpp = cpp_axis[i]
+
+            # Efflux as a function of KD at set cpp and cDc
+            efflux_vals[i,:,j] = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_ratio*KD_axis, Kp_ratio*Kp, V_base, kappa, cDc, cpp, reversed_unbinding)
+      
+    return efflux_vals
+
+def efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis):
+    ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, EIGHT-STATE MODEL '''
+
+    efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
+
+    # Evaluate mean efflux at each KD-cpp pair, for each drug concentration
+    for j in range(len(cDc_vals)):
+        cDc = cDc_vals[j]
+
+        for i in range(len(cpp_axis)):
+            cpp = cpp_axis[i]
+
+            for k in range(len(KD_axis)): # Must write for-loop explicitly due to how KD_list is defined
+                KD_list = 2*[KD_axis[k]]
+
+                efflux_vals[i,k,j] = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
+    
+    return efflux_vals
+
+#### FUNCTIONS: PLOTTING - EACH TAKES A DATASET AS AN ARGUMENT ####
+
+def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
+    ''' PLOT KD AT Jmax FOR THE ANY MODEL, GIVEN APPROPRIATE DATA '''
 
     # Note data is saved in/loaded from the parent directory
-    try: # Load data if saved
-        J = np.load("../"+filename+".npy")
-        '''
-        IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
-        MATCH THOSE USED TO CALCULATE DATA
-        '''
-
-    except: # Otherwise calculate the efflux values
-        J = efflux_matrix_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis)
-        np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
+    J = np.load("../"+filename+".npy")
+    '''
+    IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
+    MATCH THOSE USED TO CALCULATE DATA
+    '''
 
     KD_at_Jmax = get_KD_at_Jmax(J, KD_axis)
 
@@ -121,21 +155,15 @@ def plot_KD_at_Jmax_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, fil
     plt.legend(loc="lower right")
     plt.show()
 
-
-def plot_logwidth_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, filename):
-    ''' PLOT THE LOG WIDTH OF THE EFFLUX VS KD CURVE FOR THE THREE STATE MODEL '''
+def plot_logwidth(filename, KD_axis, cpp_axis):
+    ''' PLOT THE LOG WIDTH OF THE EFFLUX VS KD CURVE FOR ANY MODEL, GIVEN APPROPRIATE DATA '''
 
     # Note data is saved in/loaded from the parent directory
-    try: # Load data if saved
-        J = np.load("../"+filename+".npy")
-        '''
-        IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
-        MATCH THOSE USED TO CALCULATE DATA
-        '''
-
-    except: # Otherwise calculate the efflux values
-        J = efflux_matrix_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis)
-        np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecutive runs)
+    J = np.load("../"+filename+".npy")
+    '''
+    IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
+    MATCH THOSE USED TO CALCULATE DATA
+    '''
 
     J_logwidth = get_logwidth(J, KD_axis)
 
@@ -153,118 +181,6 @@ def plot_logwidth_3(param, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, filen
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("Log-width of $J_{max}$ with respect to $K_D$")    
-    plt.legend()
-    plt.show()
-
-#### FUNCTIONS: EIGHT-STATE MODEL ####
-
-def efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis):
-    ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, EIGHT-STATE MODEL '''
-
-    efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
-
-    # Evaluate mean efflux at each KD-cpp pair, for each drug concentration
-    for j in range(len(cDc_vals)):
-        cDc = cDc_vals[j]
-
-        for i in range(len(cpp_axis)):
-            cpp = cpp_axis[i]
-
-            for k in range(len(KD_axis)): # Must write for-loop explicitly due to how KD_list is defined
-                KD_list = 2*[KD_axis[k]]
-
-                efflux_vals[i,k,j] = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
-    
-    return efflux_vals
-
-
-def plot_KD_at_Jmax_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis, filename):
-    ''' PLOT KD AT Jmax FOR THE EIGHT-STATE MODEL AT THE PARAMETER VALUES SPECIFIED '''
-
-    # Note data is saved in/loaded from the parent directory
-    try: # Load data if saved
-        J = np.load("../"+filename+".npy")
-        '''
-        IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
-        MATCH THOSE USED TO CALCULATE DATA
-        '''
-
-    except: # Otherwise calculate the efflux values
-        J = efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis)
-        np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
-
-    KD_at_Jmax = get_KD_at_Jmax(J, KD_axis)
-
-    # Plot KD at Jmax
-    fig, ax = plt.subplots()
-    for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e3*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
-    
-    # Use scalar formatter to be able to set ticklabel format to plain
-    ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
-    ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
-    ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5])
-
-    ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$K_D$ at $J_{max}$ $(mM)$")    
-    plt.legend()
-    plt.show()
-
-
-#### FUNCTIONS: 5-STATE MODEL ####
-
-def efflux_matrix_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=False):
-    ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, UNICYCLIC WITH SEQUENTIAL UNBINDING '''
-
-    efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
-
-    # Evaluate mean efflux at each KD-cpp pair, for each drug concentration
-    for j in range(len(cDc_vals)):
-        cDc = cDc_vals[j]
-
-        for i in range(len(cpp_axis)):
-            cpp = cpp_axis[i]
-
-            # Efflux as a function of KD at set cpp and cDc
-            efflux_vals[i,:,j] = np.vectorize(pump.efflux_numerical_5)(param, KD_axis, Kp, KD_ratio*KD_axis, Qp, V_base, kappa, cDc, cpp, reversed_unbinding)
-      
-    return efflux_vals
-
-
-def plot_KD_at_Jmax_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, filename, reversed_unbinding=False):
-    ''' PLOT KD AT Jmax FOR THE THREE STATE MODEL AT THE PARAMETER VALUES SPECIFIED '''
-
-    # Note data is saved in/loaded from the parent directory
-    try: # Load data if saved
-        J = np.load("../"+filename+".npy")
-        '''
-        IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
-        MATCH THOSE USED TO CALCULATE DATA
-        '''
-
-    except: # Otherwise calculate the efflux values
-        J = efflux_matrix_5(param, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding)
-        np.save("../"+filename+".npy", J) # Save data for next time (good if just playing around with plot formatting, bad if changing param values on consecuative runs)
-
-    KD_at_Jmax = get_KD_at_Jmax(J, KD_axis)
-
-    # Plot KD at Jmax
-    fig, ax = plt.subplots()
-    for j in range(np.shape(KD_at_Jmax)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.loglog(1e6*cpp_axis, 1e6*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
-    
-    # Use scalar formatter to be able to set ticklabel format to plain
-    ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
-    ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
-    ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([0.1, 0.2, 0.5, 1, 2])
-
-    ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
-    ax.text(0.87, 1.5, "(B)",fontsize='large')
     plt.legend()
     plt.show()
 
@@ -289,12 +205,13 @@ def plot_contour(filename, KD_axis, cpp_axis):
 
     fig, ax = plt.subplots()
 
-    sctr = ax.scatter(X,Y,c=J,marker='x')
+    sctr = ax.scatter(X,Y,c=J[:,:,1],marker='x')
     cbar = fig.colorbar(sctr)
-    sctr2 = ax.plot(1e6*KD_at_Jmax[0,:],cpp_micro,'-r')
+    sctr2 = ax.plot(1e6*KD_at_Jmax[0,:],cpp_micro,'-.k')
     ax.set_xscale('log')
     ax.set_yscale('log')
-    ax.set_xlim(min(KD_micro),max(KD_micro))
+    # ax.set_xlim(min(KD_micro),max(KD_micro))
+    ax.set_xlim(5e-2, 1e4)
     ax.set_ylim(min(cpp_micro),max(cpp_micro))
     ax.set_xlabel("$K_D\;(\mu M)$")
     ax.set_ylabel("$[p]_{per}\;(\mu M)$")
@@ -310,73 +227,60 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e6 # 1/s
 rp = 1e14 # 1/s
-rt = 1e18 # 1/s
+rt3 = 1e18 # 1/s
+rt5 = 1e6 # 1/s - rt differs for 3 and 5 state models for physical consistency
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 Kp = 1e-6 # M, proton binding affinity (all models)
-# QD = 1e-5 # M, drug binding affinity from outside (five-state model)
-Qp = 1e-6 # M, proton binding affinity from cytoplasm (five-state model)
+Kp_ratio = 1 #  Ratio of Kp from outside to inside
 KD_ratio = 10 # Ratio of KD from outside to inside
-
-KDA = 1e-6 # M, drug binding affinity for cycle A (eight-state model)
-Kp_list = [1e-6, 1e-6, 1e-6, 1e-6] # M, proton binding affinities (eight-state model)
 
 V_base = -np.log(100)*kB*T/q # V, base voltage, about -110 mV 
 # kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 kappa = 0
 
 # Axes and values for comutations, plotting of KD_at_Jmax
-KD_axis = np.logspace(-9,2.5,1500) # M, drug binding affinity
-cpp_axis = np.logspace(-7,-5,400) # M, periplasmic proton concentration
+KD_axis = np.logspace(-9, 2.5, 1500) # M, drug binding affinity
+cpp_axis = np.logspace(-7,-5, 400) # M, periplasmic proton concentration
 cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 
-# Axes for plotting colour maps
-cpp_axis_map = np.logspace(-7,-5,225) # M, periplasmic proton concentration
-cDc_vals_map = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration (just a single value)
-
-KD_axis_map_3 = np.logspace(-6.5,-1,250)
+# File names for 3- and 5-state efflux data to be stored
 filename_map_3 = "J_map_3"
-
-KD_axis_map_5 = np.logspace(-8.5,-3,250) # M, drug binding affinity
 filename_map_5 = "J_map_5"
 
 
 #### MAIN CALLS ####
 
-param3 = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 class
-# plot_KD_at_Jmax_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
-plot_logwidth_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data3")
-# plot_KD_at_Jmax_5(param3, KD_axis, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals, cpp_axis, "KD_Jmax_data5", reversed_unbinding=False)
+param3 = Params3(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Params3 class to use for 3-state model plots
+param5 = Params3(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
 
-contour_3state = False
-if contour_3state:
+plots_3state = False
+if plots_3state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
     data_exists = exists("../"+filename_map_3+".npy")
-    if data_exists:
-        plot_contour(filename_map_3, KD_axis_map_3, cpp_axis_map)
-    else:
-        J_map_3 = efflux_matrix_3(param3, KD_axis_map_3, Kp, V_base, kappa, cDc_vals_map, cpp_axis_map)
+
+    if not data_exists:
+        J_map_3 = efflux_matrix_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals, cpp_axis)
         np.save("../"+filename_map_3, J_map_3)
-        plot_contour(filename_map_3, KD_axis_map_3, cpp_axis_map)
+    
+    plot_KD_at_Jmax(filename_map_3, KD_axis, cpp_axis)
+    plot_logwidth(filename_map_3, KD_axis, cpp_axis)
+    plot_contour(filename_map_3, KD_axis, cpp_axis)
 
 
-contour_5state = False
-if contour_5state:
+plots_5state = True
+if plots_5state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
+        
     data_exists = exists("../"+filename_map_5+".npy")
-    if data_exists:
-        plot_contour(filename_map_5, KD_axis_map_5, cpp_axis_map)
-    else:
-        J_map_5 = efflux_matrix_5(param3, KD_axis_map_5, Kp, KD_ratio, Qp, V_base, kappa, cDc_vals_map, cpp_axis_map, reversed_unbinding=False)
+    
+    if not data_exists:
+        J_map_5 = efflux_matrix_5(param5, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=True)
         np.save("../"+filename_map_5, J_map_5)
-        plot_contour(filename_map_5, KD_axis_map_5, cpp_axis_map)
-
-
-# param8 = Params8(1e6, 1e6, 1e6, 1e-11, 1e-7, [1,1], [0.1,0.1,0.1,0.1]) # Create instantiation of Params8 class
-# plot_KD_at_Jmax_8(param8, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis, "dummy_data8")
-
-
-
+    
+    # plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
+    # plot_logwidth(filename_map_5, KD_axis, cpp_axis)
+    plot_contour(filename_map_5, KD_axis, cpp_axis)

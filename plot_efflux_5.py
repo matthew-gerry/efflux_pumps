@@ -164,7 +164,7 @@ KD_ratio_axis = np.logspace(-2.5,4.5,50) # Ratio of outside to inside drug bindi
 # Variable for plot_efflux_vs_KD_2
 cDc_axis = np.linspace(0,3.5e-5,100)
 KD_vals = [1e-6, 5e-6, 1e-5, 1e-4]
-cpp = 1e-7
+cpp = 1e-6
 
 #### MAIN CALLS ####
 
