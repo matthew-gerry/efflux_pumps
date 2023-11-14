@@ -205,9 +205,11 @@ def plot_contour(filename, KD_axis, cpp_axis):
 
     fig, ax = plt.subplots()
 
+    # Note the efflux data array may have multiple layers for multiple [D]_in values
+    # We set the index corresponding to this to 1, hardcoded in (next two lines)
     sctr = ax.scatter(X,Y,c=J[:,:,1],marker='x')
+    sctr2 = ax.plot(1e6*KD_at_Jmax[1,:],cpp_micro,'-.k')
     cbar = fig.colorbar(sctr)
-    sctr2 = ax.plot(1e6*KD_at_Jmax[0,:],cpp_micro,'-.k')
     ax.set_xscale('log')
     ax.set_yscale('log')
     # ax.set_xlim(min(KD_micro),max(KD_micro))
@@ -215,6 +217,8 @@ def plot_contour(filename, KD_axis, cpp_axis):
     ax.set_ylim(min(cpp_micro),max(cpp_micro))
     ax.set_xlabel("$K_D\;(\mu M)$")
     ax.set_ylabel("$[p]_{per}\;(\mu M)$")
+
+    ax.text(2e-1,6,'B',fontsize=18,color='w')
     cbar.ax.set_ylabel("$J\:(s^{-1})$")
 
     plt.show()

@@ -45,9 +45,15 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    
+    plt.xlim([min(KD_axis_uM), max(KD_axis_uM)])
+    plt.ylim([0, 7])
+    
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J\:(s^{-1})$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    
+    plt.text(5e-3,6,"A",fontsize=18)
     plt.legend()
     plt.show()
 
@@ -154,7 +160,7 @@ cDc = 1e-5 # M, cytoplasmic drug concentration
 KD_ratio = 10 # M, multiply by KD to get drug binding affinity from outside
 
 # Variables for plot_efflux_vs_KD
-KD_axis = np.logspace(-9, -0.5, 200) # M, drug binding affinity
+KD_axis = np.logspace(-9, -1, 200) # M, drug binding affinity
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
 # Variables for plot_efflux_vs_ratio
