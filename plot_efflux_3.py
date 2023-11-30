@@ -272,6 +272,58 @@ def contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis, filename
 
     plt.show()
 
+
+def linear_response_check(param, KD, Kp, V_base_vals, kappa, cDc, dmup_axis):
+    ''' PLOT EFFLUX AS A FUNCTION OF PROTON CHEMICAL POTENTIAL DIFFERENCE AT LINEAR RESPONSE '''
+
+    # Evaluate pre-factor at equilibrium
+    cpp_axis = param.cpc*np.exp(-dmup_axis/(kB*T)) # Get periplasmic [p] given the chem potential difference
+    KM_lr = pump.KM_3(param, KD, Kp, 0, 0, param.cpc)[0] # Get equilibirum KM value
+    ktplus_lr = param.rt*param.vD*param.vp*KD*Kp/(1 + param.vD*param.vp*KD*Kp) # Get ktplus assuming zero voltage
+
+    # Notice that the quantity dmup is the chemical potential difference for protons due ONLY to the concentration gradient (voltage is treated separately)
+    # and that it is defined as mu_cyt - mu_per, so it will in general be negative
+    #   We will ultimately plot the efflux against the negative of this quantity (more intuitive)
+
+    # Calculate the (small) delta mu for drug molecules to include in the thermodynamic force
+    dmuD = kB*T*np.log(cDo/cDc)
+
+    # Empty lists to populate with the results of calculations
+    exact_efflux = []
+    lr_efflux = []
+
+    for i in range(len(V_base_vals)):
+        V_base = V_base_vals[i]
+
+        # Calculate the exact value of the efflux
+        exact_output = np.vectorize(pump.efflux_MM_3)(param, KD, Kp, V_base, kappa, cDc, cpp_axis)
+
+        # Calulate the thermodynamic force based on the exact values of the concentrations and voltage
+        force = -(q*V_base + dmuD + dmup_axis)/(kB*T)
+        # Combine with equiliibrum values calculated above to get the linear response efflux
+        lr_output = ktplus_lr*(param.cpc/(Kp+ param.cpc))*(param.cDo/(KM_lr+param.cDo))*force
+
+        # Record flipped version of these lists since we are plotting against -dmup (see comments above)
+        exact_efflux.append(np.flip(exact_output))
+        lr_efflux.append(np.flip(lr_output))
+
+    # Plot mean values and variances side by side
+    dmup_axis_meV_plot = -6.25e21*np.flip(dmup_axis)
+    V_vals_mV = [1e3*x for x in V_base_vals]
+
+    fig, ax = plt.subplots()
+    for i in range(len(V_base_vals)):
+        ax.plot(dmup_axis_meV_plot, lr_efflux[i], label="$\Delta V = "+str(round(V_vals_mV[i],1))+"\:mV$", linestyle = ls_list[i])
+        ax.plot(dmup_axis_meV_plot, exact_efflux[i], '--', color="black", linewidth=1)
+    ax.set_xlim([0, max(dmup_axis_meV_plot)])
+    # ax.set_ylim([0,6.5e-4])
+    ax.set_xlabel("$k_BT\ln([p]_{per}/[p]_{cyt})\;(meV)$")
+    ax.set_ylabel("$J\:(s^{-1})$")
+    # ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    ax.legend()
+    plt.show()
+
+
 #### GLOBAL VARIABLES ####
 
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
@@ -318,6 +370,11 @@ cDc_over_KD_axis = np.logspace(-2.2,3.5,100)
 V_abs_axis = np.linspace(0.001, 0.15, 225)
 cpp_axis_2 = np.logspace(-7, -5, 200)
 
+# For linear_response_check
+V_base_vals_lr = [-0.000, -0.0001, -0.0005] # V, membrane potential
+cDc_lr = cDo # M, inside drug concentration
+dmup_axis_lr = np.linspace(-3e-22,0,100) # J, proton concentration gradient chemical potential
+
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
@@ -329,3 +386,4 @@ plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
+# linear_response_check(param, KD, Kp, V_base_vals_lr, kappa, cDc_lr, dmup_axis_lr)
