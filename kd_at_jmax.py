@@ -184,13 +184,13 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     plt.legend()
     plt.show()
 
-def plot_contour(filename, KD_axis, cpp_axis):
+def plot_contour(filename, KD_axis, cpp_axis, rD):
     ''' PLOTS EFFLUX AS A FUNCTION OF BOTH [p] AND KD ON A CONTOUR PLOT USING DATA GENERATED WITH "EFFLUX_MATRIX" FUNCTION '''
 
     # Load the data, break out of function execution if not present
     try:
         J = np.load("../"+filename+".npy")
-        ''' ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION MATCH THOSE USED TO CALCULATE THE DATA '''
+        ''' ENSURE THAT rD, KD_axis AND cpp_axis FED INTO THIS FUNCTION MATCH THOSE USED TO CALCULATE THE DATA '''
     except:
         print(filename+".npy not found in parent directory. Generate data using efflux_matrix_5")
         return
@@ -207,9 +207,10 @@ def plot_contour(filename, KD_axis, cpp_axis):
 
     # Note the efflux data array may have multiple layers for multiple [D]_in values
     # We set the index corresponding to this to 1, hardcoded in (next two lines)
-    sctr = ax.scatter(X,Y,c=J[:,:,1],marker='x')
+    sctr = ax.scatter(X,Y,c=J[:,:,1]/rD,marker='x')
     sctr2 = ax.plot(1e6*KD_at_Jmax[1,:],cpp_micro,'-.k')
     cbar = fig.colorbar(sctr)
+    cbar.formatter.set_useMathText(True)
     ax.set_xscale('log')
     ax.set_yscale('log')
     # ax.set_xlim(min(KD_micro),max(KD_micro))
@@ -218,8 +219,8 @@ def plot_contour(filename, KD_axis, cpp_axis):
     ax.set_xlabel("$K_D\;(\mu M)$")
     ax.set_ylabel("$[p]_{per}\;(\mu M)$")
 
-    ax.text(2e-1,6,'B',fontsize=18,color='w')
-    cbar.ax.set_ylabel("$J\:(s^{-1})$")
+    ax.text(1.8e-1,5.7,'B',fontsize=18,color='w')
+    cbar.ax.set_ylabel(r"$J\nu_D/k_D^+$")
 
     plt.show()
 
@@ -272,7 +273,7 @@ if plots_3state:
     
     plot_KD_at_Jmax(filename_map_3, KD_axis, cpp_axis)
     plot_logwidth(filename_map_3, KD_axis, cpp_axis)
-    plot_contour(filename_map_3, KD_axis, cpp_axis)
+    plot_contour(filename_map_3, KD_axis, cpp_axis, rD)
 
 
 plots_5state = True
@@ -287,4 +288,4 @@ if plots_5state:
     
     # plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
     # plot_logwidth(filename_map_5, KD_axis, cpp_axis)
-    plot_contour(filename_map_5, KD_axis, cpp_axis)
+    plot_contour(filename_map_5, KD_axis, cpp_axis, rD)

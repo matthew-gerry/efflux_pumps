@@ -44,16 +44,16 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     cpp_vals_uM = [1e6*x for x in cpp_vals]
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
-        plt.semilogx(KD_axis_uM, mean_efflux[i], label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+        plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     
     plt.xlim([min(KD_axis_uM), max(KD_axis_uM)])
-    plt.ylim([0, 7])
+    plt.ylim([0, 7e-6])
     
     plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel("$J\:(s^{-1})$")
+    plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     
-    plt.text(5e-3,6,"A",fontsize=18)
+    plt.text(5e-3,5.8e-6,"A",fontsize=18)
     plt.legend()
     plt.show()
 
