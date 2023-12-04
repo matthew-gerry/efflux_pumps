@@ -161,7 +161,7 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     # Note data is saved in/loaded from the parent directory
     J = np.load("../"+filename+".npy")
     '''
-    IF LOADING DATA, ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
+    ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
     MATCH THOSE USED TO CALCULATE DATA
     '''
 
@@ -183,6 +183,39 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     ax.set_ylabel("Log-width of $J_{max}$ with respect to $K_D$")    
     plt.legend()
     plt.show()
+
+def plot_compare_logwidth(filename3, filename5, KD_axis, cpp_axis):
+    ''' PLOT THE LOG WIDTH OF EFFLUX VS KD CURVE FOR BOTH MODELS, GIVEN DATA FILES FOR EACH '''
+    
+    # Note data is saved in/loaded from the parent directory
+    J3 = np.load("../"+filename3+".npy")
+    J5 = np.load("../"+filename5+".npy")
+    '''
+    ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
+    MATCH THOSE USED TO CALCULATE DATA
+    '''
+    
+    # Get log-width data from each data set
+    J_logwidth_3 = get_logwidth(J3, KD_axis)
+    J_logwidth_5 = get_logwidth(J5, KD_axis)
+
+    # Plot log-width - we cycle through each cDc value, though in practice only one is used
+    fig, ax = plt.subplots()
+    for j in range(np.shape(J_logwidth_3)[0]): # Plot the KD at Jmax curves for different cDc values
+        ax.semilogx(1e6*cpp_axis, J_logwidth_3[j,:], label="Three-state model", linestyle=ls_list[0])
+        ax.semilogx(1e6*cpp_axis, J_logwidth_5[j,:], label="Five-state model", linestyle=ls_list[1])
+
+       # Use scalar formatter to be able to set ticklabel format to plain
+    ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
+    ax.set_xlim([min(1e6*cpp_axis), max(1e6*cpp_axis)])
+
+    ax.ticklabel_format(style='plain') # No scientific notation
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
+    ax.set_ylabel("Log-width of $J$ with respect to $K_D\;(\mu M)$")
+    plt.legend()
+    plt.show()
+
 
 def plot_contour(filename, KD_axis, cpp_axis, rD):
     ''' PLOTS EFFLUX AS A FUNCTION OF BOTH [p] AND KD ON A CONTOUR PLOT USING DATA GENERATED WITH "EFFLUX_MATRIX" FUNCTION '''
@@ -256,6 +289,11 @@ cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
 filename_map_3 = "J_map_3"
 filename_map_5 = "J_map_5"
 
+# Setup of the log-width comparison
+cDc_vals_wc = np.array([1e-5]) # M, cytoplasmic drug concentration (just choose one value)
+
+filename_compare_3 = "J_compare_3"
+filename_compare_5 = "J_compare_5"
 
 #### MAIN CALLS ####
 
@@ -276,7 +314,7 @@ if plots_3state:
     plot_contour(filename_map_3, KD_axis, cpp_axis, rD)
 
 
-plots_5state = True
+plots_5state = False
 if plots_5state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
         
@@ -289,3 +327,21 @@ if plots_5state:
     # plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
     # plot_logwidth(filename_map_5, KD_axis, cpp_axis)
     plot_contour(filename_map_5, KD_axis, cpp_axis, rD)
+
+
+plot_width_comparison = True
+if plot_width_comparison:
+    # Prepare data for both models if necessary, then create plot
+
+    data3_exists = exists("../"+filename_compare_3+".npy")
+    data5_exists = exists("../"+filename_compare_5+".npy")
+
+    if not data3_exists:
+        J_compare_3 = efflux_matrix_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals_wc, cpp_axis)
+        np.save("../"+filename_compare_3+".npy", J_compare_3)
+
+    if not data5_exists:
+        J_compare_5 = efflux_matrix_5(param5, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals_wc, cpp_axis, reversed_unbinding=True)
+        np.save("../"+filename_compare_5+".npy", J_compare_5)
+    
+    plot_compare_logwidth(filename_compare_3, filename_compare_5, KD_axis, cpp_axis)
