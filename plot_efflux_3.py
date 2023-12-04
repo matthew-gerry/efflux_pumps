@@ -307,19 +307,18 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
         lr_efflux.append(np.flip(lr_output))
 
     # Plot mean values and variances side by side
-    dmup_axis_meV_plot = -6.25e21*np.flip(dmup_axis)
-    V_vals_mV = [1e3*x for x in V_base_vals]
+    dmup_axis_plot = -np.flip(dmup_axis)/(kB*T)
 
     fig, ax = plt.subplots()
     for i in range(len(param_list)):
         param = param_list[i]
-        ax.plot(dmup_axis_meV_plot, lr_efflux[i]/param.rD, label=r"$\bar{[D]} = "+str(round(1e6*param.cDo,1))+"\:\mu M$", linestyle = ls_list[i])
-        ax.plot(dmup_axis_meV_plot, exact_efflux[i]/param.rD, '--', color="black", linewidth=1)
-    ax.set_xlim([0, max(dmup_axis_meV_plot)])
+        ax.plot(dmup_axis_plot, lr_efflux[i]/param.rD, label=r"$\bar{[D]} = "+str(round(1e6*param.cDo,1))+"\:\mu M$", linestyle = ls_list[i])
+        ax.plot(dmup_axis_plot, exact_efflux[i]/param.rD, '--', color="black", linewidth=1)
+    ax.set_xlim([0, max(dmup_axis_plot)])
     # ax.set_ylim([0,6.5e-4])
-    ax.set_xlabel("$k_BT\ln([p]_{per}/[p]_{cyt})\;(meV)$")
+    ax.set_xlabel("$\ln([p]_{per}/[p]_{cyt})$")
     ax.set_ylabel(r"$J\nu_D/k_D^+$")
-    # ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.legend()
     plt.show()
 
