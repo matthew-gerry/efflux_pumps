@@ -151,8 +151,8 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
 
     V_entropy = -q*V_base/T
 
-    sigma7_plot = [S/V_entropy for S in sigma7]
-    sigma5_plot = [S/V_entropy for S in sigma5]
+    sigma7_plot = [kB*S/V_entropy for S in sigma7]
+    sigma5_plot = [kB*S/V_entropy for S in sigma5]
 
     plt.semilogx(1e6*cpp_axis, sigma7_plot)
     plt.semilogx(1e6*cpp_axis, sigma5_plot)
