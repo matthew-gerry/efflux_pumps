@@ -138,15 +138,19 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
 def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis):
     ''' PLOT THE ENTROPY PRODUCTION RATE AS A FUNCTION OF THE PERIPLASMIC PROTON CONCENTRATION '''
 
-    sigma = [] # Allocate array for entropy production rate lists
+    sigma5, sigma7 = [], [] # Allocate array for entropy production rate lists
 
     # Evaluate EPR at each value of the periplasmic proton concentration
     for i in range(len(cpp_axis)):
         cpp = cpp_axis[i]
-        sigma_val = pump.entropy_7(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp)
-        sigma = sigma + [sigma_val]
+        sigma5_val = pump.entropy_5(param, KD, Kp_list[0], KD_ratio, Qp_list[0], V_base, kappa, cDc, cpp)
+        sigma7_val = pump.entropy_7(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp)
+        
+        sigma5 = sigma5 + [sigma5_val]
+        sigma7 = sigma7 + [sigma7_val]
 
-    plt.semilogx(1e6*cpp_axis, sigma)
+    plt.semilogx(1e6*cpp_axis, sigma7)
+    plt.semilogx(1e6*cpp_axis, sigma5)
     plt.show()
 
 

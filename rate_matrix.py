@@ -254,6 +254,8 @@ def rate_matrix_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
 def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
     '''
     RATE MATRIX FOR THE EFFLUX PUMP, SEVEN-STATE KINETIC MODEL
+
+    IN THIS MODEL, THE DRUG UNBINDS TO THE OUTSIDE, THEN THE PROTON TO THE CYTOPLASM
     
     CALLS A Params3 OBJECT AS DEFINED IN params.py
     '''
@@ -274,11 +276,11 @@ def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
 
     R = np.zeros([7,7]) # Initialize rate matrix
     # Insert transition rates related to pump cycle...
-    R[0,1] = kD*KD; R[0,4] = kD*QD
+    R[0,1] = kD*KD; R[4,3] = kD*QD
     R[1,0] = kD*cDc; R[1,2] = kp*Kp_pump
     R[2,1] = kp*cpp; R[2,3] = kt_pump*QD*Qp_pump/(KG*KD*Kp_pump)
-    R[3,2] = kt_pump; R[3,4] = kp*param.cpc
-    R[4,3] = kp*Qp_pump; R[4,0] = kD*param.cDo
+    R[3,2] = kt_pump; R[4,0] = kp*param.cpc
+    R[0,4] = kp*Qp_pump; R[3,4] = kD*param.cDo
 
     # ... and waste cycle
     R[0,5] = kp*Kp_waste; R[0,6] = kp*Qp_waste

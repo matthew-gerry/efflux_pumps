@@ -201,6 +201,26 @@ def efflux_numerical_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp, reversed_
     return efflux
 
 
+def entropy_5(param, KD, Kp, KD_ratio, Qp, V_base, kappa, cDc, cpp):
+    ''' ENTROPY PRODUCTION RATE OF THE THREE-STATE MODEL, WITH REVERSED UNBINDING '''
+
+    R = rm.rate_matrix_5a(param, KD, Kp, KD*KD_ratio, Qp, V_base, kappa, cDc, cpp)
+    SS = rm.steady_state(R)
+    SS = SS.reshape(5) # Flatten the steady state probability distribution
+
+    # Entropy production is a sum over force-flux contributions derived from the rate matrix
+    # force = np.log(np.divide(R,np.transpose(R)))
+    quotients = np.divide(R,np.transpose(R))
+    quotients[np.isnan(quotients)] = 1 # Set 0/0 to 1 for consistency
+    force = np.log(quotients)
+
+    flux = np.multiply(R, np.array(5*[SS]))
+
+    entropy_contributions = np.multiply(force, flux) # In units of kB
+    EPR = entropy_contributions.sum() # Sum over all contributions
+
+    return EPR
+
 #### FUNCTIONS: 4-STATE MODEL ####
 
 def efflux_numerical_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
