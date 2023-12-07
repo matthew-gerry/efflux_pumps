@@ -258,3 +258,23 @@ def p_flux_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
     p_flux = efflux + SS[6]*R[0,6] - SS[0]*R[6,0] # Add the proton flux from the waste cycle
 
     return p_flux
+
+def entropy_7(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp):
+    ''' ENTROPY PRODUCTION RATE OF THE THREE-STATE MODEL '''
+
+    R = rm.rate_matrix_7(param, KD, Kp_list, KD*KD_ratio, Qp_list, V_base, kappa, cDc, cpp)
+    SS = rm.steady_state(R)
+    SS = SS.reshape(7) # Flatten the steady state probability distribution
+
+    # Entropy production is a sum over force-flux contributions derived from the rate matrix
+    # force = np.log(np.divide(R,np.transpose(R)))
+    quotients = np.divide(R,np.transpose(R))
+    quotients[np.isnan(quotients)] = 1 # Set 0/0 to 1 for consistency
+    force = np.log(quotients)
+
+    flux = np.multiply(R, np.array(7*[SS]))
+
+    entropy_contributions = np.multiply(force, flux) # In units of kB
+    EPR = entropy_contributions.sum() # Sum over all contributions
+
+    return EPR

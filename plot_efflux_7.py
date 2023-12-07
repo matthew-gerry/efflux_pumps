@@ -135,13 +135,30 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
     plt.show()
 
 
+def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis):
+    ''' PLOT THE ENTROPY PRODUCTION RATE AS A FUNCTION OF THE PERIPLASMIC PROTON CONCENTRATION '''
+
+    sigma = [] # Allocate array for entropy production rate lists
+
+    # Evaluate EPR at each value of the periplasmic proton concentration
+    for i in range(len(cpp_axis)):
+        cpp = cpp_axis[i]
+        sigma_val = pump.entropy_7(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp)
+        sigma = sigma + [sigma_val]
+
+    plt.semilogx(1e6*cpp_axis, sigma)
+    plt.show()
+
+
+
+
 
 
 #### GLOBAL VARIABLES ####
 
 # Parameter values
 rD = 1e6 # 1/s
-rp = 1e15 # 1/s
+rp = 1e14 # 1/s
 rt = 1e6 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
@@ -161,12 +178,15 @@ KD_axis = np.logspace(-9, -2, 200)
 Kp_list = [Kp_pump, Kp_waste]
 Qp_list = Kp_list
 cpp_vals = [1e-7, 5e-6, 1e-6]
-KD_ratio = 1
+KD_ratio = 10
 
+# For plot_epr
+cpp_axis = np.logspace(-7,-5, 200)
 
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 # plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis)

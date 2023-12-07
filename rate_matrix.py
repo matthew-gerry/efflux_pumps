@@ -261,8 +261,10 @@ def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
     # Electric potential Boltzmann factor
     KG = get_derived_params(param, cpp, V_base, kappa)[2]
 
-    Kp_pump = Kp_list[0]; Kp_waste = Kp_list[1]
-    Qp_pump = Qp_list[0]; Qp_waste = Qp_list[1]
+    Kp_pump = Kp_list[0]
+    Kp_waste = Kp_list[1]
+    Qp_pump = Qp_list[0]
+    Qp_waste = Qp_list[1]
 
     # Forward rate constants
     kD = param.rD*param.vD # Drug binding
