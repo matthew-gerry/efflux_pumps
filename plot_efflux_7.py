@@ -149,8 +149,13 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
         sigma5 = sigma5 + [sigma5_val]
         sigma7 = sigma7 + [sigma7_val]
 
-    plt.semilogx(1e6*cpp_axis, sigma7)
-    plt.semilogx(1e6*cpp_axis, sigma5)
+    V_entropy = -q*V_base/T
+
+    sigma7_plot = [S/V_entropy for S in sigma7]
+    sigma5_plot = [S/V_entropy for S in sigma5]
+
+    plt.semilogx(1e6*cpp_axis, sigma7_plot)
+    plt.semilogx(1e6*cpp_axis, sigma5_plot)
     plt.show()
 
 
@@ -191,6 +196,6 @@ cpp_axis = np.logspace(-7,-5, 200)
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
-plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis)
