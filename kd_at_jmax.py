@@ -101,6 +101,29 @@ def efflux_matrix_5(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_v
       
     return efflux_vals
 
+def efflux_matrix_7(param, KD_axis, Kp_list, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals, cpp_axis):
+    ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, MULTICYCLIC WITH FUTILE CYCLE '''
+
+    Qp_list = [Kp_list[0]*Kp_ratio, Kp_list[1]*Kp_ratio] # Derive Qp values from Kp ratio and Kp list
+
+    efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
+
+    # Evaluate mean efflux at each KD-cpp pair, for each drug concentration
+    for j in range(len(cDc_vals)):
+        cDc = cDc_vals[j]
+
+        for i in range(len(cpp_axis)):
+            cpp = cpp_axis[i]
+
+            # Efflux as a function of KD at set cpp and cDc
+            for k in range(len(KD_axis)):
+                KD = KD_axis[k]
+                efflux_vals[i,k,j] = pump.efflux_numerical_7(param, KD, Kp_list, KD_ratio*KD, Qp_list, V_base, kappa, cDc, cpp)
+      
+    return efflux_vals
+
+
+
 def efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis):
     ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, EIGHT-STATE MODEL '''
 
@@ -184,26 +207,27 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     plt.legend()
     plt.show()
 
-def plot_compare_logwidth(filename3, filename5, KD_axis, cpp_axis):
+def plot_compare_logwidth(filenameA, filenameB, KD_axis, cpp_axis, models):
     ''' PLOT THE LOG WIDTH OF EFFLUX VS KD CURVE FOR BOTH MODELS, GIVEN DATA FILES FOR EACH '''
     
     # Note data is saved in/loaded from the parent directory
-    J3 = np.load("../"+filename3+".npy")
-    J5 = np.load("../"+filename5+".npy")
+    JA = np.load("../"+filenameA+".npy")
+    JB = np.load("../"+filenameB+".npy")
+
     '''
     ENSURE THAT KD_axis AND cpp_axis FED INTO THIS FUNCTION
     MATCH THOSE USED TO CALCULATE DATA
     '''
     
     # Get log-width data from each data set
-    J_logwidth_3 = get_logwidth(J3, KD_axis)
-    J_logwidth_5 = get_logwidth(J5, KD_axis)
+    J_logwidth_A = get_logwidth(JA, KD_axis)
+    J_logwidth_B = get_logwidth(JB, KD_axis)
 
     # Plot log-width - we cycle through each cDc value, though in practice only one is used
     fig, ax = plt.subplots()
-    for j in range(np.shape(J_logwidth_3)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.semilogx(1e6*cpp_axis, J_logwidth_3[j,:], label="Three-state model", linestyle=ls_list[0])
-        ax.semilogx(1e6*cpp_axis, J_logwidth_5[j,:], label="Five-state model", linestyle=ls_list[1])
+    for j in range(np.shape(J_logwidth_A)[0]): # Plot the KD at Jmax curves for different cDc values
+        ax.semilogx(1e6*cpp_axis, J_logwidth_A[j,:], label=models[0]+"-state model", color="purple", linestyle=ls_list[0])
+        ax.semilogx(1e6*cpp_axis, J_logwidth_B[j,:], label=models[1]+"-state model", color="olive", linestyle=ls_list[1])
 
        # Use scalar formatter to be able to set ticklabel format to plain
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -213,6 +237,7 @@ def plot_compare_logwidth(filename3, filename5, KD_axis, cpp_axis):
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("Log-width of $J$ with respect to $K_D\;(\mu M)$")
+    # ax.text(0.15, 3.78, "D", fontsize=16)
     plt.legend()
     plt.show()
 
@@ -273,6 +298,7 @@ cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 Kp = 1e-6 # M, proton binding affinity (all models)
+Kp_list = [Kp, Kp] # M, use equal value for both elements of Kp_list (for seven-state model)
 Kp_ratio = 1 #  Ratio of Kp from outside to inside
 KD_ratio = 10 # Ratio of KD from outside to inside
 
@@ -294,6 +320,7 @@ cDc_vals_wc = np.array([1e-5]) # M, cytoplasmic drug concentration (just choose 
 
 filename_compare_3 = "J_compare_3"
 filename_compare_5 = "J_compare_5"
+filename_compare_7 = "J_compare_7"
 
 #### MAIN CALLS ####
 
@@ -335,6 +362,7 @@ if plot_width_comparison:
 
     data3_exists = exists("../"+filename_compare_3+".npy")
     data5_exists = exists("../"+filename_compare_5+".npy")
+    data7_exists = exists("../"+filename_compare_7+".npy")
 
     if not data3_exists:
         J_compare_3 = efflux_matrix_3(param3, KD_axis, Kp, V_base, kappa, cDc_vals_wc, cpp_axis)
@@ -344,4 +372,9 @@ if plot_width_comparison:
         J_compare_5 = efflux_matrix_5(param5, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals_wc, cpp_axis, reversed_unbinding=True)
         np.save("../"+filename_compare_5+".npy", J_compare_5)
     
-    plot_compare_logwidth(filename_compare_3, filename_compare_5, KD_axis, cpp_axis)
+    if not data7_exists:
+        J_compare_7 = efflux_matrix_7(param5, KD_axis, Kp_list, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals_wc, cpp_axis)
+        np.save("../"+filename_compare_7+".npy", J_compare_7)
+
+    plot_compare_logwidth(filename_compare_3, filename_compare_5, KD_axis, cpp_axis, ["Three", "Five"])
+    plot_compare_logwidth(filename_compare_7, filename_compare_5, KD_axis, cpp_axis, ["Seven", "Five"])
