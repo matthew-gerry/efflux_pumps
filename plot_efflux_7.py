@@ -93,13 +93,15 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa,
     cpp_vals_uM = microfy(cpp_vals)
 
     for i in range(len(cpp_vals)):
-        plt.semilogx(KD_axis_uM, efflux_vals[i],label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    plt.ylim([0, 6.8])
+        efflux_plot = [x/param.rD for x in efflux_vals[i]]
+        plt.semilogx(KD_axis_uM, efflux_plot,label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    plt.xlim([min(KD_axis_uM),max(KD_axis_uM)])
+    plt.ylim([0, 4.5e-6])
     plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel("$J\:(s^{-1})$")
+    plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    plt.text(2, 6.3, '(B)')
-    # plt.legend()
+    plt.text(0.03, 3.9e-6, 'A', fontsize=16)
+    plt.legend()
     plt.show()
 
     
@@ -127,11 +129,12 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
     plt.figure()
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, efficiency[i],label="$[p]_{per} =\:"+str(round(cpp_vals_uM[i],1))+"\:\mu M$",linestyle=ls_list[i])
-    plt.ylim([0, 1.1])
+    plt.xlim([min(KD_axis_uM),max(KD_axis_uM)])
+    plt.ylim([0, 0.64])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J/J_p$")
-    plt.legend()
-    plt.text(2,1,'(A)')
+    # plt.legend()
+    plt.text(0.03,0.565,'B',fontsize=16)
     plt.show()
 
 
@@ -151,14 +154,21 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
 
     V_entropy = -q*V_base/T
 
-    sigma7_plot = [kB*S/V_entropy for S in sigma7]
-    sigma5_plot = [kB*S/V_entropy for S in sigma5]
+    sigma7_plot = [kB*S/V_entropy/param.rD for S in sigma7]
+    sigma5_plot = [kB*S/V_entropy/param.rD for S in sigma5]
 
-    plt.semilogx(1e6*cpp_axis, sigma7_plot)
-    plt.semilogx(1e6*cpp_axis, sigma5_plot)
+    # Configure some things for plotting
+    ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
+
+    plt.semilogx(1e6*cpp_axis, sigma7_plot, label="Seven-state model", color="purple", linestyle=ls_list[0])
+    plt.semilogx(1e6*cpp_axis, sigma5_plot, label="Five-state model", color="olive", linestyle=ls_list[1])
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    plt.xlabel("$[p]_{per}\;(\mu M)$")
+    plt.xlim([1e6*min(cpp_axis), 1e6*max(cpp_axis)])
+    plt.ylabel("$\dot{\Sigma}$")
+    plt.legend(loc="upper right")
+    plt.text(0.13,1.45e-4,'C',fontsize=16)
     plt.show()
-
-
 
 
 
@@ -183,10 +193,10 @@ kappa = 0
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # Plot axis and parameters defining different curves
-KD_axis = np.logspace(-9, -2, 200)
+KD_axis = np.logspace(-8, -2, 200)
 Kp_list = [Kp_pump, Kp_waste]
 Qp_list = Kp_list
-cpp_vals = [1e-7, 5e-6, 1e-6]
+cpp_vals = [1e-7, 3e-7, 6e-7, 1e-6]
 KD_ratio = 10
 
 # For plot_epr
@@ -196,6 +206,6 @@ cpp_axis = np.logspace(-7,-5, 200)
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
-# plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis)
