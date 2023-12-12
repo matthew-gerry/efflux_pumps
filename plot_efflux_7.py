@@ -156,18 +156,27 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
 
     sigma7_plot = [kB*S/V_entropy/param.rD for S in sigma7]
     sigma5_plot = [kB*S/V_entropy/param.rD for S in sigma5]
+    cpp_axis_uM = [1e6*cpp for cpp in cpp_axis]
 
     # Configure some things for plotting
     ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
 
-    plt.semilogx(1e6*cpp_axis, sigma7_plot, label="Seven-state model", color="purple", linestyle=ls_list[0])
-    plt.semilogx(1e6*cpp_axis, sigma5_plot, label="Five-state model", color="olive", linestyle=ls_list[1])
-    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    plt.xlabel("$[p]_{per}\;(\mu M)$")
-    plt.xlim([1e6*min(cpp_axis), 1e6*max(cpp_axis)])
-    plt.ylabel("$\dot{\Sigma}$")
-    plt.legend(loc="upper right")
-    plt.text(0.13,1.45e-4,'C',fontsize=16)
+    fig, ax = plt.subplots()
+
+    ax.semilogx(cpp_axis_uM, sigma7_plot, label="Seven-state model", color="purple", linestyle=ls_list[0])
+    ax.semilogx(cpp_axis_uM, sigma5_plot, label="Five-state model", color="olive", linestyle=ls_list[1])
+    ax.set_xlim([min(cpp_axis_uM), max(cpp_axis_uM)])
+   
+    # Use scalar formatter to be able to set ticklabel format to plain
+    ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    ax.ticklabel_format(axis='x', style='plain', scilimits=(0,0), useMathText=True)
+    ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
+   
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    ax.set_xlabel("$[p]_{per}\;(\mu M)$")
+    ax.set_ylabel("$\dot{\Sigma}$")
+    ax.legend(loc="upper right")
+    ax.text(0.13,1.45e-4,'C',fontsize=16)
     plt.show()
 
 
@@ -206,6 +215,6 @@ cpp_axis = np.logspace(-7,-5, 200)
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
-plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis)
