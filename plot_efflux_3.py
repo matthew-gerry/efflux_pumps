@@ -38,7 +38,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    plt.ylim(0,9e-6)
+    # plt.ylim(0,9e-6)
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel(r"$J\nu_D/k_D^+$")
@@ -104,7 +104,7 @@ def plot_efflux_vs_D_2(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     # ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([1e-7,2e-7,5e-7,1e-6,2e-6,5e-6,1e-5])
+    # ax.set_yticks([1e-7,2e-7,5e-7,1e-6,2e-6,5e-6,1e-5])
     ax.set_xlim([0,40])
     ax.annotate("Stronger binding",xy=(20,1.5e-5), xytext=(20, 1.5e-6),
             horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))    
@@ -141,8 +141,8 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
-    ax.set_xlim([0.1,10])
-    ax.set_ylim([0,1000])
+    # ax.set_xlim([0.1,10])
+    # ax.set_ylim([0,1000])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
@@ -329,7 +329,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 
 
 # Parameter values
-rD = 1e6 # 1/s
+rD = 1e8 # 1/s
 rp = 1e14 # 1/s
 rt = 1e18 # 1/s
 vD = 1 # 1/M
@@ -338,12 +338,12 @@ cDo = 1e-5 # M
 cpc = 1e-7 # M
 
 # Variables - for all functions
-Kp = 1e-6 # M, proton binding affinity
+Kp = 1e-7 # M, proton binding affinity
 # V_base = -0.15 # V, base voltage (except plot_specificity)
 V_base = -np.log(100)*kB*T/q  # V, base voltage, about -110 mV (except plot_specificity)
 # kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 kappa = 0
-KD = 1e-6 # M, drug binding affininty (except plot_efflux_vs_KD)
+KD = 1e-5 # M, drug binding affininty (except plot_efflux_vs_KD)
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
@@ -359,7 +359,7 @@ V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 # For plot_efflux_vs_D_2
 cDc_axis_2 = np.linspace(0,4e-5,100)
-KD_vals_2 = [5e-6, 1e-5, 5e-5, 1e-4]
+KD_vals_2 = [5e-6, 1e-5, 4e-5, 7.5e-5]
 cpp = 3e-7
 
 # For plot_efflux_vs_D_over_KD
@@ -384,11 +384,11 @@ paramA = Params3(rD, rp, rt, cDoA, cpc, vD, vp)
 paramB = Params3(rD, rp, rt, cDoB, cpc, vD, vp)
 param_list = [param, paramA, paramB]
 
-# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-# plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
+plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
-# plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
-linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
+# linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
