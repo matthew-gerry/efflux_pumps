@@ -322,26 +322,27 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
     ax.legend()
     plt.show()
 
-def plot_efflux_KD_p_ind(param, KD_axis, cDc, cDo_var_vals, kp_const):
+
+def plot_efflux_KD_p_ind(param, KD_axis, cDc_vals, kp_const):
     ''' EFFLUX CURVE FOR PROTON-INDEPENDENT TRANSPORTER '''
 
     mean_efflux = []
 
     # Evaluate efflux mean at each value of KD and cDo
-    for i in range(len(cDo_var_vals)):
-        cDo_var = cDo_var_vals[i]
+    for i in range(len(cDc_vals)):
+        cDc = cDc_vals[i]
 
-        mean_output = np.vectorize(pump.efflux_numerical_p_ind)(param, KD_axis, cDc, cDo_var, kp_const)
+        mean_output = np.vectorize(pump.efflux_numerical_p_ind)(param, KD_axis, cDc, kp_const)
 
         mean_efflux.append(mean_output)
 
 
     # Plot mean values
     KD_axis_uM = 1e6*KD_axis # KD_axis in uM
-    cDo_var_vals_uM = [1e6*x for x in cDo_var_vals]
+    cDc_vals_uM = [1e6*x for x in cDc_vals]
 
-    for i in range(len(cDo_var_vals)):
-        plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[D]_{out} = "+str(round(cDo_var_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+    for i in range(len(cDc_vals)):
+        plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[D]_{in} = "+str(round(cDc_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
 
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
@@ -408,7 +409,7 @@ cDoB = 1e-7
 
 # For plot_efflux_KD_p_ind
 kp_const = rp*vp*Kp # 1/s, constant rate for unbiased transition replacing proton binding
-cDo_var_vals = [1e-7, 5e-7, 1e-6]
+cDc_vals = [1e-6, 5e-6, 1e-5]
 
 #### MAIN CALLS ####
 
@@ -425,4 +426,4 @@ param_list = [param, paramA, paramB]
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
 # linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
-plot_efflux_KD_p_ind(paramB, KD_axis, cDc, cDo_var_vals, kp_const)
+plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)

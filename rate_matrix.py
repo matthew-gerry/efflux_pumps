@@ -296,7 +296,7 @@ def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
 
 #### FUNCTIONS: PROTON-INDEPENDENT ####
 
-def rate_matrix_p_ind(param, KD, cDc, cDo_var, kp_const):
+def rate_matrix_p_ind(param, KD, cDc, kp_const):
     ''' THREE-STATE MODEL REPLACING EACH PROTON-DEPENDENT STEP WITH A PROTON-INDEPENDENT ONE '''
 
     # Set outside drug concentration cDo as a variable (override param setting)
@@ -309,7 +309,7 @@ def rate_matrix_p_ind(param, KD, cDc, cDo_var, kp_const):
     # Insert transition rates
     R[0,1] = kD*KD; R[0,2] = kt
     R[1,0] = kD*cDc; R[1,2] = kp_const
-    R[2,0] = kt*cDo_var/KD; R[2,1] = kp_const
+    R[2,0] = kt*param.cDo/KD; R[2,1] = kp_const
 
     # Get diagonal elements from normalization condition
     for i in range(3):
