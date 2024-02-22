@@ -164,7 +164,7 @@ KD_axis = np.logspace(-9, -1, 200) # M, drug binding affinity
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
 # Variables for plot_efflux_vs_ratio
-KD = 1e-6 # M, drug binding affinity from inside
+KD = 1e-5 # M, drug binding affinity from inside
 KD_ratio_axis = np.logspace(-2.5,4.5,50) # Ratio of outside to inside drug binding affinities
 
 # Variable for plot_efflux_vs_KD_2

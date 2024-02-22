@@ -245,7 +245,7 @@ def plot_logwidth_p_ind(filename, KD_axis, cDc_axis):
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     # ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
     # ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5])
-    ax.set_ylim([0,4])
+    # ax.set_ylim([0,4])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[D]_{in}$ $(\mu M)$")
