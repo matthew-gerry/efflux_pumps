@@ -51,7 +51,8 @@ def get_logwidth(efflux_data, KD_axis):
     for j in range(np.shape(efflux_data)[2]): 
         for i in range(np.shape(efflux_data)[0]):
             J_at_cpp = efflux_data[i,:,j] # Efflux as a function of KD at fixed cpp
-            J_halfmax_at_cpp = 0.5*J_at_cpp.max()
+            # J_halfmax_at_cpp = 0.5*J_at_cpp.max()
+            J_halfmax_at_cpp = 1
 
             arg1, arg2 = 0,0 # Initialize args for positions of half max
             for k in range(len(J_at_cpp)-1):
@@ -177,7 +178,7 @@ def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
         ax.loglog(1e6*cpp_axis, 1e6*KD_at_Jmax[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     ax.set_xlim([1e6*min(cpp_axis), 1e6*max(cpp_axis)])
-    ax.set_ylim([1,15])
+    # ax.set_ylim([1,15])
 
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -403,7 +404,7 @@ if plots_5state:
         J_map_5 = efflux_matrix_5(param5, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=True)
         np.save("../"+filename_map_5, J_map_5)
     
-    # plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
+    plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
     # plot_logwidth(filename_map_5, KD_axis, cpp_axis)
     plot_contour(filename_map_5, KD_axis, cpp_axis, rD)
 
