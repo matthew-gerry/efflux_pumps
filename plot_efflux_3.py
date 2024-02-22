@@ -32,7 +32,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
 
         mean_efflux.append(mean_output)
 
-    # Plot mean values and variances side by side
+    # Plot mean values
     KD_axis_uM = 1e6*KD_axis # KD_axis in uM
     cpp_vals_uM = [1e6*x for x in cpp_vals]
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
@@ -322,6 +322,35 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
     ax.legend()
     plt.show()
 
+def plot_efflux_KD_p_ind(param, KD_axis, cDc, cDo_var_vals, kp_const):
+    ''' EFFLUX CURVE FOR PROTON-INDEPENDENT TRANSPORTER '''
+
+    mean_efflux = []
+
+    # Evaluate efflux mean at each value of KD and cDo
+    for i in range(len(cDo_var_vals)):
+        cDo_var = cDo_var_vals[i]
+
+        mean_output = np.vectorize(pump.efflux_numerical_p_ind)(param, KD_axis, cDc, cDo_var, kp_const)
+
+        mean_efflux.append(mean_output)
+
+
+    # Plot mean values
+    KD_axis_uM = 1e6*KD_axis # KD_axis in uM
+    cDo_var_vals_uM = [1e6*x for x in cDo_var_vals]
+
+    for i in range(len(cDo_var_vals)):
+        plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[D]_{out} = "+str(round(cDo_var_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+
+    plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
+    plt.xlabel("$K_D\:(\mu M)$")
+    plt.ylabel(r"$J\nu_D/k_D^+$")
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    plt.legend()
+    plt.show()
+
+
 
 #### GLOBAL VARIABLES ####
 
@@ -377,6 +406,10 @@ dmup_axis_lr = np.linspace(-3e-22,0,100) # J, proton concentration gradient chem
 cDoA = 1e-6 # Some alternate values of the drug concentrations
 cDoB = 1e-7
 
+# For plot_efflux_KD_p_ind
+kp_const = rp*vp*Kp # 1/s, constant rate for unbiased transition replacing proton binding
+cDo_var_vals = [1e-7, 5e-7, 1e-6]
+
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
@@ -384,11 +417,12 @@ paramA = Params3(rD, rp, rt, cDoA, cpc, vD, vp)
 paramB = Params3(rD, rp, rt, cDoB, cpc, vD, vp)
 param_list = [param, paramA, paramB]
 
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
+# plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
-plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+# plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
 # linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
+plot_efflux_KD_p_ind(paramB, KD_axis, cDc, cDo_var_vals, kp_const)

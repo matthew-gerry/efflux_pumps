@@ -298,3 +298,16 @@ def entropy_7(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp):
     EPR = entropy_contributions.sum() # Sum over all contributions
 
     return EPR
+
+
+#### FUNCTIONS: PROTON-INDEPENDENT MODEL ####
+
+def efflux_numerical_p_ind(param, KD, cDc, cDo_var, kp_const):
+    ''' GET MEAN EFFLUX RATE BY SOLVING FOR THE STEADY-STATE NUMERICALLY, 3-STATE MODEL '''
+    R = rm.rate_matrix_p_ind(param, KD, cDc, cDo_var, kp_const)
+
+    # Find steady state solution as eigenvector of R associated with the zero eigenvalue
+    SS = rm.steady_state(R)
+    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
+
+    return efflux

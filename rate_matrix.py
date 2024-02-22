@@ -293,6 +293,31 @@ def rate_matrix_7(param, KD, Kp_list, QD, Qp_list, V_base, kappa, cDc, cpp):
 
     return R
 
+
+#### FUNCTIONS: PROTON-INDEPENDENT ####
+
+def rate_matrix_p_ind(param, KD, cDc, cDo_var, kp_const):
+    ''' THREE-STATE MODEL REPLACING EACH PROTON-DEPENDENT STEP WITH A PROTON-INDEPENDENT ONE '''
+
+    # Set outside drug concentration cDo as a variable (override param setting)
+
+    # Forward rate constants
+    kD = param.rD*param.vD # Drug binding - same as standard model
+    kt = param.rt*param.vD*KD/(1 + param.vD*KD) # Multistep transition
+
+    R = np.zeros([3,3]) # Initialize rate matrix
+    # Insert transition rates
+    R[0,1] = kD*KD; R[0,2] = kt
+    R[1,0] = kD*cDc; R[1,2] = kp_const
+    R[2,0] = kt*cDo_var/KD; R[2,1] = kp_const
+
+    # Get diagonal elements from normalization condition
+    for i in range(3):
+        R[i,i] = -sum(R)[i]
+
+    return R
+
+
 #### FUNCTIONS: GENERAL ####
 
 def steady_state(R):
