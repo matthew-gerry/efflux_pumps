@@ -60,7 +60,7 @@ def get_logwidth(efflux_data, KD_axis):
                 if J_at_cpp[k] > J_halfmax_at_cpp and J_at_cpp[k+1] <= J_halfmax_at_cpp:
                     arg2 = k
 
-            J_logwidth[j,i] = np.log10(KD_axis[arg2]/KD_axis[arg1]) # Value of KD for which max efflux is achieved
+            J_logwidth[j,i] = np.log10(KD_axis[arg2]/KD_axis[arg1]) # Log-width of efflux vs K_D curve
 
     return J_logwidth
 
@@ -120,6 +120,20 @@ def efflux_matrix_7(param, KD_axis, Kp_list, KD_ratio, Kp_ratio, V_base, kappa, 
                 KD = KD_axis[k]
                 efflux_vals[i,k,j] = pump.efflux_numerical_7(param, KD, Kp_list, KD_ratio*KD, Qp_list, V_base, kappa, cDc, cpp)
       
+    return efflux_vals
+
+def efflux_matrix_p_ind(param, KD_axis, cDc_axis, kp_const):
+    ''' MATRIX OF EFFLUX VALUES WITH VARYING KD, [D]_in, P=INDEPENDENT MODEL '''
+
+    efflux_vals = np.zeros([len(cDc_axis),len(KD_axis),1]) # Initialize matrix to store efflux vals
+
+    # Evaluate mean efflux at eacj KD-[D]_in pair
+    for i in range(len(cDc_axis)):
+        cDc = cDc_axis[i]
+
+        # Efflux as a function of KD at set cDc
+        efflux_vals[i,:,0] = np.vectorize(pump.efflux_numerical_p_ind)(param, KD_axis, cDc, kp_const)
+
     return efflux_vals
 
 
@@ -207,6 +221,38 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     plt.legend()
     plt.show()
 
+
+def plot_logwidth_p_ind(filename, KD_axis, cDc_axis):
+    ''' PLOT THE LOG WIDTH OF THE EFFLUX VS KD CURVE AS A FUNCTON OF THE INSIDE DRUG CONCENTRATION, INTENDED FOR p-INDEPENDENT MODEL '''
+
+    # Note data is saved in/loaded from the parent directory
+    J = np.load("../"+filename+".npy")
+
+    '''
+    ENSURE THAT KD_axis AND cDc_axis FED INTO THIS FUNCTION
+    MATCH THOSE USED TO CALCULATE DATA
+    '''
+
+    J_logwidth = get_logwidth(J, KD_axis)
+
+    # Plot log-width
+    fig, ax = plt.subplots()
+    for j in range(np.shape(J_logwidth)[0]): # Plot the KD at Jmax curves for different cDc values
+        ax.semilogx(1e6*cDc_axis, J_logwidth[j,:], linestyle=ls_list[j])
+    
+    # Use scalar formatter to be able to set ticklabel format to plain
+    # ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
+    # ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
+    # ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5])
+    ax.set_ylim([0,4])
+
+    ax.ticklabel_format(style='plain') # No scientific notation
+    ax.set_xlabel("$[D]_{in}$ $(\mu M)$")
+    ax.set_ylabel("Log-width of $J_{max}$ with respect to $K_D$")    
+    plt.show()
+
+
 def plot_compare_logwidth(filenameA, filenameB, KD_axis, cpp_axis, models):
     ''' PLOT THE LOG WIDTH OF EFFLUX VS KD CURVE FOR BOTH MODELS, GIVEN DATA FILES FOR EACH '''
     
@@ -288,19 +334,21 @@ def plot_contour(filename, KD_axis, cpp_axis, rD):
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
 
 # Parameter values
-rD = 1e6 # 1/s
+rD = 1e8 # 1/s
 rp = 1e14 # 1/s
 rt3 = 1e18 # 1/s
 rt5 = 1e6 # 1/s - rt differs for 3 and 5 state models for physical consistency
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
+cDoB = 1e-7 # M, for p-independent pump
 cpc = 1e-7 # M
 
 Kp = 1e-6 # M, proton binding affinity (all models)
 Kp_list = [Kp, Kp] # M, use equal value for both elements of Kp_list (for seven-state model)
 Kp_ratio = 1 #  Ratio of Kp from outside to inside
 KD_ratio = 10 # Ratio of KD from outside to inside
+kp_const = rp*vp*Kp # Specific to p_independent model
 
 V_base = -np.log(100)*kB*T/q # V, base voltage, about -110 mV 
 # kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
@@ -308,12 +356,15 @@ kappa = 0
 
 # Axes and values for comutations, plotting of KD_at_Jmax
 KD_axis = np.logspace(-9, 2.5, 1500) # M, drug binding affinity
+KD_axis_B = np.logspace(-11, 0.5, 1000) # M, drug binding affinity - lower KD needed to probe p-independent model
 cpp_axis = np.logspace(-7,-5, 400) # M, periplasmic proton concentration
 cDc_vals = np.array([1e-6, 1e-5]) # M, cytoplasmic drug concentration
+cDc_axis = np.logspace(-6.5, -5, 500)
 
 # File names for 3- and 5-state efflux data to be stored
 filename_map_3 = "J_map_3"
 filename_map_5 = "J_map_5"
+filename_map_p_ind = "J_map_p_ind"
 
 # Setup of the log-width comparison
 cDc_vals_wc = np.array([1e-5]) # M, cytoplasmic drug concentration (just choose one value)
@@ -326,6 +377,7 @@ filename_compare_7 = "J_compare_7"
 
 param3 = Params3(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Params3 class to use for 3-state model plots
 param5 = Params3(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
+param3B = Params3(rD, rp, rt3, cDoB, cpc, vD, vp) # 3-state param object with lower [D]_out for p-independent plotting
 
 plots_3state = False
 if plots_3state:
@@ -356,7 +408,19 @@ if plots_5state:
     plot_contour(filename_map_5, KD_axis, cpp_axis, rD)
 
 
-plot_width_comparison = True
+plots_p_ind = True
+if plots_p_ind:
+
+    data_exists = exists("../"+filename_map_p_ind+".npy")
+
+    if not data_exists:
+        J_map_p_ind = efflux_matrix_p_ind(param3B, KD_axis_B, cDc_axis, kp_const)
+        np.save("../"+filename_map_p_ind, J_map_p_ind)
+    
+    plot_logwidth_p_ind(filename_map_p_ind, KD_axis_B, cDc_axis)
+
+
+plot_width_comparison = False
 if plot_width_comparison:
     # Prepare data for both models if necessary, then create plot
 
@@ -378,3 +442,6 @@ if plot_width_comparison:
 
     plot_compare_logwidth(filename_compare_3, filename_compare_5, KD_axis, cpp_axis, ["Three", "Five"])
     plot_compare_logwidth(filename_compare_7, filename_compare_5, KD_axis, cpp_axis, ["Seven", "Five"])
+
+
+# Output logwidth for proton-independent model
