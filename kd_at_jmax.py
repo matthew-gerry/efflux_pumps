@@ -207,7 +207,7 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     # Plot log-width
     fig, ax = plt.subplots()
     for j in range(np.shape(J_logwidth)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.semilogx(1e6*cpp_axis, J_logwidth[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
+        ax.semilogx(1e6*cpp_axis, J_logwidth[j,:], 'o', label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$")
     
     # Use scalar formatter to be able to set ticklabel format to plain
     # ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -238,7 +238,7 @@ def plot_logwidth_p_ind(filename, KD_axis, cDc_axis):
     # Plot log-width
     fig, ax = plt.subplots()
     for j in range(np.shape(J_logwidth)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.semilogx(1e6*cDc_axis, J_logwidth[j,:], linestyle=ls_list[j])
+        ax.semilogx(1e6*cDc_axis, J_logwidth[j,:], 'o')
     
     # Use scalar formatter to be able to set ticklabel format to plain
     # ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -390,7 +390,7 @@ if plots_3state:
     
     plot_KD_at_Jmax(filename_map_3, KD_axis, cpp_axis)
     plot_logwidth(filename_map_3, KD_axis, cpp_axis)
-    plot_contour(filename_map_3, KD_axis, cpp_axis, rD)
+    # plot_contour(filename_map_3, KD_axis, cpp_axis, rD)
 
 
 plots_5state = False
@@ -408,7 +408,7 @@ if plots_5state:
     plot_contour(filename_map_5, KD_axis, cpp_axis, rD)
 
 
-plots_p_ind = True
+plots_p_ind = False
 if plots_p_ind:
 
     data_exists = exists("../"+filename_map_p_ind+".npy")
@@ -420,7 +420,7 @@ if plots_p_ind:
     plot_logwidth_p_ind(filename_map_p_ind, KD_axis_B, cDc_axis)
 
 
-plot_width_comparison = False
+plot_width_comparison = True
 if plot_width_comparison:
     # Prepare data for both models if necessary, then create plot
 
