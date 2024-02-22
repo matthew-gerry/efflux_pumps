@@ -344,7 +344,7 @@ cDo = 1e-5 # M
 cDoB = 1e-7 # M, for p-independent pump
 cpc = 1e-7 # M
 
-Kp = 1e-6 # M, proton binding affinity (all models)
+Kp = 1e-7 # M, proton binding affinity (all models)
 Kp_list = [Kp, Kp] # M, use equal value for both elements of Kp_list (for seven-state model)
 Kp_ratio = 1 #  Ratio of Kp from outside to inside
 KD_ratio = 10 # Ratio of KD from outside to inside
