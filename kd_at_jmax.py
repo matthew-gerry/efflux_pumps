@@ -218,7 +218,7 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("Log-width of $J_{max}$ with respect to $K_D$")    
+    ax.set_ylabel("Log-width of $J$ with respect to $K_D$")    
     plt.legend()
     plt.show()
 
@@ -239,18 +239,19 @@ def plot_logwidth_p_ind(filename, KD_axis, cDc_axis):
     # Plot log-width
     fig, ax = plt.subplots()
     for j in range(np.shape(J_logwidth)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.semilogx(1e6*cDc_axis, J_logwidth[j,:], 'o')
+        ax.semilogx(1e6*cDc_axis, J_logwidth[j,:])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     # ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     # ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
     # ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5])
-    # ax.set_ylim([0,4])
+    ax.set_xlim([1e6*min(cDc_axis), 1e6*max(cDc_axis)])
+    ax.set_ylim([0,6.8])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[D]_{in}$ $(\mu M)$")
-    ax.set_ylabel("Log-width of $J_{max}$ with respect to $K_D$")    
+    ax.set_ylabel("Log-width of $J$ with respect to $K_D$")    
     plt.show()
 
 
@@ -421,7 +422,7 @@ if plots_p_ind:
     plot_logwidth_p_ind(filename_map_p_ind, KD_axis_B, cDc_axis)
 
 
-plot_width_comparison = True
+plot_width_comparison = False
 if plot_width_comparison:
     # Prepare data for both models if necessary, then create plot
 
