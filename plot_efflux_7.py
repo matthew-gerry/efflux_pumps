@@ -96,7 +96,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa,
         efflux_plot = [x/param.rD for x in efflux_vals[i]]
         plt.semilogx(KD_axis_uM, efflux_plot,label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.xlim([min(KD_axis_uM),max(KD_axis_uM)])
-    plt.ylim([0, 4.5e-6])
+    # plt.ylim([0, 4.5e-6])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
@@ -105,7 +105,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa,
     plt.show()
 
     
-def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals):
+def plot_efficiency_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals):
     ''' PLOT CHEMICAL EFFICIENCY AS A FUNCTION OF KD FOR VARIOUS [p] VALUES, KD RATIO FIXED '''
 
     efficiency = len(cpp_vals)*[[]] # Allocate array for chemical efficiency values
@@ -130,7 +130,7 @@ def plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kap
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, efficiency[i],label="$[p]_{per} =\:"+str(round(cpp_vals_uM[i],1))+"\:\mu M$",linestyle=ls_list[i])
     plt.xlim([min(KD_axis_uM),max(KD_axis_uM)])
-    plt.ylim([0, 0.64])
+    # plt.ylim([0, 0.64])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J/J_p$")
     # plt.legend()
@@ -185,7 +185,7 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
 #### GLOBAL VARIABLES ####
 
 # Parameter values
-rD = 1e6 # 1/s
+rD = 1e8 # 1/s
 rp = 1e14 # 1/s
 rt = 1e6 # 1/s, unlike in the three-state model, rt does not depend on other char. rates
 vD = 1 # 1/M
@@ -193,9 +193,9 @@ vp = 1e-6 # 1/M
 cDo = 1e-5 # M
 cpc = 1e-7 # M
 
-KD = 1e-6
-Kp_pump = 1e-6 # M, primary proton binding affinity for pumping cycle
-Kp_waste = 1e-6 # M, primary proton binding affinity for waste cycle
+KD = 1e-5
+Kp_pump = 1e-7 # M, primary proton binding affinity for pumping cycle
+Kp_waste = 1e-7 # M, primary proton binding affinity for waste cycle
 V_base = -np.log(100)*kB*T/q # V, base voltage, about -110 mV
 # kappa = -0.028 # V, voltage dependence on pH difference across the inner membrane
 kappa = 0
@@ -215,6 +215,6 @@ cpp_axis = np.logspace(-7,-5, 200)
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-# plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
-# plot_efficiency_vs_p(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+plot_efficiency_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis)
