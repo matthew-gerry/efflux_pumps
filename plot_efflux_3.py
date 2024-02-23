@@ -38,13 +38,13 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    plt.ylim(0,3.3e-7)
+    plt.ylim(0, 1.3e-7)
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
-    plt.text(10**(-2.5),2.85e-7,"A",fontsize=18)
+    plt.text(10**(-2),1.15e-7,"A",fontsize=18)
     plt.show()
 
 
@@ -141,12 +141,12 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
     ax.set_xlim([0.1,10])
-    ax.set_ylim([0,90])
+    ax.set_ylim([0,80])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_M$ $(\mu M)$")
-    ax.text(0.13,79,"B",fontsize=16)
+    ax.text(0.13,69,"B",fontsize=16)
     # plt.legend()
     plt.show()
 
@@ -316,7 +316,7 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
     ax.set_xlim([0, max(dmup_axis_plot)])
     # ax.set_ylim([0,6.5e-4])
     # ax.set_xlabel("$\ln([p]_{per}/[p]_{cyt})$")
-    ax.set_xlabel("$\Delta\mu_p/k_BT$")
+    ax.set_xlabel("$-\Delta\mu_p/k_BT$")
     ax.set_ylabel(r"$J\nu_D/k_D^+$")
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.legend()
@@ -361,7 +361,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e8 # 1/s
 rp = 1e14 # 1/s
-rt = 1e18 # 1/s
+rt = 1e17 # 1/s
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
@@ -377,7 +377,7 @@ KD = 1e-5 # M, drug binding affininty (except plot_efflux_vs_KD)
 cDc = 1e-5 # M, cytoplasmic drug concentration (except plot_efflux_vs_D)
 
 # For plot_efflux_vs_KD and plot_efflux_vs_D
-KD_axis = np.logspace(-9, -1, 200) # M, drug binding affinity
+KD_axis = np.logspace(-8.5, -0.5, 200) # M, drug binding affinity
 cDc_axis = np.linspace(0,5e-5,100) # M, cytoplasmic drug concentration
 cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentration
 
@@ -403,7 +403,7 @@ cpp_axis_2 = np.logspace(-7, -5, 200)
 # V_base_vals_lr = [-0.000, -0.0001, -0.0005] # V, membrane potential
 V_base_lr = 0
 dmuD = 0 # Assume no drug concentration gradient
-dmup_axis_lr = np.linspace(-1.5e-22,0,100) # J, proton concentration gradient chemical potential
+dmup_axis_lr = np.linspace(-3.3e-22,0,100) # J, proton concentration gradient chemical potential
 cDoA = 1e-6 # Some alternate values of the drug concentrations
 cDoB = 1e-7
 
@@ -425,5 +425,5 @@ param_list = [param, paramA, paramB]
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
-linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
-# plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)
+# linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
+plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)

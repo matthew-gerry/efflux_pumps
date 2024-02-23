@@ -52,7 +52,7 @@ def get_logwidth(efflux_data, KD_axis):
         for i in range(np.shape(efflux_data)[0]):
             J_at_cpp = efflux_data[i,:,j] # Efflux as a function of KD at fixed cpp
             # J_halfmax_at_cpp = 0.5*J_at_cpp.max()
-            J_halfmax_at_cpp = 1
+            J_halfmax_at_cpp = 0.25
 
             arg1, arg2 = 0,0 # Initialize args for positions of half max
             for k in range(len(J_at_cpp)-1):
@@ -184,12 +184,12 @@ def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    ax.set_yticks([1, 2, 5, 10, 20])
+    ax.set_yticks([2, 5, 10, 20, 50])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
-    ax.text(0.15,22,"B",fontsize=18)
+    ax.text(0.15,70,"B",fontsize=18)
     plt.legend(loc="lower right")
     plt.show()
 
@@ -247,7 +247,7 @@ def plot_logwidth_p_ind(filename, KD_axis, cDc_axis):
     # ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
     # ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5])
     ax.set_xlim([1e6*min(cDc_axis), 1e6*max(cDc_axis)])
-    ax.set_ylim([0,6.8])
+    ax.set_ylim([0,8])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[D]_{in}$ $(\mu M)$")
@@ -338,7 +338,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 # Parameter values
 rD = 1e8 # 1/s
 rp = 1e14 # 1/s
-rt3 = 1e18 # 1/s
+rt3 = 1e17 # 1/s
 rt5 = 1e6 # 1/s - rt differs for 3 and 5 state models for physical consistency
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
@@ -381,7 +381,7 @@ param3 = Params3(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Params
 param5 = Params3(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
 param3B = Params3(rD, rp, rt3, cDoB, cpc, vD, vp) # 3-state param object with lower [D]_out for p-independent plotting
 
-plots_3state = True
+plots_3state = False
 if plots_3state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
     data_exists = exists("../"+filename_map_3+".npy")
@@ -422,7 +422,7 @@ if plots_p_ind:
     plot_logwidth_p_ind(filename_map_p_ind, KD_axis_B, cDc_axis)
 
 
-plot_width_comparison = False
+plot_width_comparison = True
 if plot_width_comparison:
     # Prepare data for both models if necessary, then create plot
 
