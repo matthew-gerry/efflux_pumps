@@ -189,7 +189,7 @@ def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
-    ax.text(0.15,13,"B",fontsize=18)
+    ax.text(0.15,22,"B",fontsize=18)
     plt.legend(loc="lower right")
     plt.show()
 
@@ -208,7 +208,7 @@ def plot_logwidth(filename, KD_axis, cpp_axis):
     # Plot log-width
     fig, ax = plt.subplots()
     for j in range(np.shape(J_logwidth)[0]): # Plot the KD at Jmax curves for different cDc values
-        ax.semilogx(1e6*cpp_axis, J_logwidth[j,:], 'o', label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$")
+        ax.semilogx(1e6*cpp_axis, J_logwidth[j,:], label="$[D]_{in} = $"+str(int(1e6*cDc_vals[j]))+" $\mu M$", linestyle=ls_list[j])
     
     # Use scalar formatter to be able to set ticklabel format to plain
     # ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
@@ -381,7 +381,7 @@ param3 = Params3(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Params
 param5 = Params3(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
 param3B = Params3(rD, rp, rt3, cDoB, cpc, vD, vp) # 3-state param object with lower [D]_out for p-independent plotting
 
-plots_3state = False
+plots_3state = True
 if plots_3state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
     data_exists = exists("../"+filename_map_3+".npy")

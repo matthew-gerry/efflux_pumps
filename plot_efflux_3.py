@@ -38,13 +38,13 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
     # mean_efflux_nano = [1e9*x for x in mean_efflux] # mean efflux in nano s^-1
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
-    # plt.ylim(0,9e-6)
+    plt.ylim(0,3.3e-7)
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     plt.legend()
-    plt.text(10**(-2.5),7.7e-6,"A",fontsize=18)
+    plt.text(10**(-2.5),2.85e-7,"A",fontsize=18)
     plt.show()
 
 
@@ -103,12 +103,11 @@ def plot_efflux_vs_D_2(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
     ax.set_ylabel(r"$J\nu_D/k_D^+$")
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    # ax.set_yticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
-    # ax.set_yticks([1e-7,2e-7,5e-7,1e-6,2e-6,5e-6,1e-5])
-    ax.set_xlim([0,40])
+    ax.set_yticks([1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7, 2e-7, 5e-7])
+    ax.set_xlim([0,150])
     ax.annotate("Stronger binding",xy=(20,1.5e-5), xytext=(20, 1.5e-6),
             horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))    
-    ax.text(2.5,8e-6,"A",fontsize=16)
+    ax.text(15,2.25e-7,"A",fontsize=16)
     ax.legend()
     plt.show()
 
@@ -141,13 +140,13 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
-    # ax.set_xlim([0.1,10])
-    # ax.set_ylim([0,1000])
+    ax.set_xlim([0.1,10])
+    ax.set_ylim([0,90])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_M$ $(\mu M)$")
-    ax.text(0.13,850,"B",fontsize=16)
+    ax.text(0.13,79,"B",fontsize=16)
     # plt.legend()
     plt.show()
 
@@ -388,7 +387,7 @@ KG_base_vals = [40, 60, 80, 100]
 V_base_vals = [-kB*T*np.log(x)/q for x in KG_base_vals]
 
 # For plot_efflux_vs_D_2
-cDc_axis_2 = np.linspace(0,4e-5,100)
+cDc_axis_2 = np.linspace(0,1.5e-4,600)
 KD_vals_2 = [5e-6, 1e-5, 4e-5, 7.5e-5]
 cpp = 3e-7
 
@@ -418,11 +417,11 @@ paramA = Params3(rD, rp, rt, cDoA, cpc, vD, vp)
 paramB = Params3(rD, rp, rt, cDoB, cpc, vD, vp)
 param_list = [param, paramA, paramB]
 
-plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
-# plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
 # linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
