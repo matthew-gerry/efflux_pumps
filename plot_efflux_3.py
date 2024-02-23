@@ -315,7 +315,8 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
         ax.plot(dmup_axis_plot, exact_efflux[i]/param.rD, '--', color="black", linewidth=1)
     ax.set_xlim([0, max(dmup_axis_plot)])
     # ax.set_ylim([0,6.5e-4])
-    ax.set_xlabel("$\ln([p]_{per}/[p]_{cyt})$")
+    # ax.set_xlabel("$\ln([p]_{per}/[p]_{cyt})$")
+    ax.set_xlabel("$\Delta\mu_p/k_BT$")
     ax.set_ylabel(r"$J\nu_D/k_D^+$")
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     ax.legend()
@@ -402,7 +403,7 @@ cpp_axis_2 = np.logspace(-7, -5, 200)
 # V_base_vals_lr = [-0.000, -0.0001, -0.0005] # V, membrane potential
 V_base_lr = 0
 dmuD = 0 # Assume no drug concentration gradient
-dmup_axis_lr = np.linspace(-3e-22,0,100) # J, proton concentration gradient chemical potential
+dmup_axis_lr = np.linspace(-1.5e-22,0,100) # J, proton concentration gradient chemical potential
 cDoA = 1e-6 # Some alternate values of the drug concentrations
 cDoB = 1e-7
 
@@ -421,8 +422,8 @@ param_list = [param, paramA, paramB]
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
 # plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
-plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
+# plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
-# linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
+linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
 # plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)
