@@ -285,7 +285,8 @@ def plot_compare_logwidth(filenameA, filenameB, KD_axis, cpp_axis, models):
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("Log-width of $J$ with respect to $K_D\;(\mu M)$")
-    # ax.text(0.15, 3.78, "D", fontsize=16)
+    # ax.text(0.15, 5.6, "D", fontsize=16)
+    # plt.legend(loc="lower right")
     plt.legend()
     plt.show()
 
@@ -405,7 +406,7 @@ if plots_5state:
         J_map_5 = efflux_matrix_5(param5, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc_vals, cpp_axis, reversed_unbinding=True)
         np.save("../"+filename_map_5, J_map_5)
     
-    plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
+    # plot_KD_at_Jmax(filename_map_5, KD_axis, cpp_axis)
     # plot_logwidth(filename_map_5, KD_axis, cpp_axis)
     plot_contour(filename_map_5, KD_axis, cpp_axis, rD)
 
@@ -445,5 +446,3 @@ if plot_width_comparison:
     plot_compare_logwidth(filename_compare_3, filename_compare_5, KD_axis, cpp_axis, ["Three", "Five"])
     plot_compare_logwidth(filename_compare_7, filename_compare_5, KD_axis, cpp_axis, ["Seven", "Five"])
 
-
-# Output logwidth for proton-independent model

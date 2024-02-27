@@ -96,11 +96,11 @@ def plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa,
         efflux_plot = [x/param.rD for x in efflux_vals[i]]
         plt.semilogx(KD_axis_uM, efflux_plot,label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.xlim([min(KD_axis_uM),max(KD_axis_uM)])
-    # plt.ylim([0, 4.5e-6])
+    plt.ylim([0, 5.2e-8])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    plt.text(0.03, 3.9e-6, 'A', fontsize=16)
+    plt.text(0.03, 4.7e-8, 'A', fontsize=16)
     plt.legend()
     plt.show()
 
@@ -130,11 +130,11 @@ def plot_efficiency_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, ka
     for i in range(len(cpp_vals)):
         plt.semilogx(KD_axis_uM, efficiency[i],label="$[p]_{per} =\:"+str(round(cpp_vals_uM[i],1))+"\:\mu M$",linestyle=ls_list[i])
     plt.xlim([min(KD_axis_uM),max(KD_axis_uM)])
-    # plt.ylim([0, 0.64])
+    plt.ylim([0, 1.14])
     plt.xlabel("$K_D\:(\mu M)$")
     plt.ylabel("$J/J_p$")
     # plt.legend()
-    plt.text(0.03,0.565,'B',fontsize=16)
+    plt.text(0.03,1.05,'B',fontsize=16)
     plt.show()
 
 
@@ -166,7 +166,8 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
     ax.semilogx(cpp_axis_uM, sigma7_plot, label="Seven-state model", color="purple", linestyle=ls_list[0])
     ax.semilogx(cpp_axis_uM, sigma5_plot, label="Five-state model", color="olive", linestyle=ls_list[1])
     ax.set_xlim([min(cpp_axis_uM), max(cpp_axis_uM)])
-   
+    ax.set_ylim(0, 2e-7)
+
     # Use scalar formatter to be able to set ticklabel format to plain
     ax.xaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='x', style='plain', scilimits=(0,0), useMathText=True)
@@ -176,7 +177,7 @@ def plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis
     ax.set_xlabel("$[p]_{per}\;(\mu M)$")
     ax.set_ylabel("$\dot{\Sigma}$")
     ax.legend(loc="upper right")
-    ax.text(0.13,1.45e-4,'C',fontsize=16)
+    ax.text(0.13,1.8e-7,'C',fontsize=16)
     plt.show()
 
 
@@ -215,6 +216,6 @@ cpp_axis = np.logspace(-7,-5, 200)
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 
-plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
-plot_efficiency_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
+# plot_efficiency_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_epr(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_axis)
