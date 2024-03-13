@@ -332,7 +332,7 @@ def plot_efflux_KD_p_ind(param, KD_axis, cDc_vals, kp_const):
     for i in range(len(cDc_vals)):
         cDc = cDc_vals[i]
 
-        mean_output = np.vectorize(pump.efflux_numerical_p_ind)(param, KD_axis, cDc, kp_const)
+        mean_output = np.vectorize(pump.efflux_MM_p_ind)(param, KD_axis, cDc, kp_const)
 
         mean_efflux.append(mean_output)
 

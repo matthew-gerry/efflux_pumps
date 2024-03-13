@@ -312,12 +312,12 @@ def efflux_numerical_p_ind(param, KD, cDc, kp_const):
 
     return efflux
 
-def efflux_analytic_p_ind(param, KD, cDc, kp_const):
+def efflux_MM_p_ind(param, KD, cDc, kp_const):
     ''' HAND-DERIVED EXPRESSION FOR THE EFFLUX RATE, ANALOGOUS TO THE ONE FOR THE STANDARD MODEL '''
     
     # Effective affinity
     KM_num = KD*(param.rD*param.vD*KD*(kp_const + param.rt*(1 + param.cDo/KD)) + kp_const*(param.rD + param.rt*(1 + 2*param.cDo/KD)))
-    KM_denom = param.rt + 2*kp_const*param.rD*(1 + param.vD*KD)
+    KM_denom = param.rD*param.vD*KD*param.rt + 2*kp_const*param.rD*(1 + param.vD*KD)
     KM = KM_num/KM_denom
 
     # Reversibility factor
