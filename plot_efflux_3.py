@@ -352,6 +352,36 @@ def plot_efflux_KD_p_ind(param, KD_axis, cDc_vals, kp_const):
     plt.show()
 
 
+def plot_efflux_KD_2(param, KD_axis, cDc_vals):
+    ''' EFFLUX CURVE FOR THE EVEN SIMPLER, PROTON-INDEPENDENT TWO-STATE MODEL '''
+
+
+    mean_efflux = []
+
+    # Evaluate efflux mean at each value of KD and cDo
+    for i in range(len(cDc_vals)):
+        cDc = cDc_vals[i]
+
+        mean_output = np.vectorize(pump.efflux_MM_2)(param, KD_axis, cDc)
+
+        mean_efflux.append(mean_output)
+
+
+    # Plot mean values
+    KD_axis_uM = 1e6*KD_axis # KD_axis in uM
+    cDc_vals_uM = [1e6*x for x in cDc_vals]
+
+    for i in range(len(cDc_vals)):
+        plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[D]_{in} = "+str(round(cDc_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
+
+    plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
+    plt.xlabel("$K_D\:(\mu M)$")
+    plt.ylabel(r"$J\nu_D/k_D^+$")
+    plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    plt.legend()
+    plt.show()
+
+
 
 #### GLOBAL VARIABLES ####
 
@@ -362,6 +392,7 @@ ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, 
 rD = 1e8 # 1/s
 rp = 1e14 # 1/s
 rt = 1e17 # 1/s
+rtB = 1e8 # 1/s - for the proton-independent model
 vD = 1 # 1/M
 vp = 1e-6 # 1/M
 cDo = 1e-5 # M
@@ -415,7 +446,7 @@ cDc_vals = [1e-6, 5e-6, 1e-5]
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
 paramA = Params3(rD, rp, rt, cDoA, cpc, vD, vp)
-paramB = Params3(rD, rp, rt, cDoB, cpc, vD, vp)
+paramB = Params3(rD, rp, rtB, cDoB, cpc, vD, vp)
 param_list = [param, paramA, paramB]
 
 # plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
@@ -426,4 +457,5 @@ param_list = [param, paramA, paramB]
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
 # linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
-plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)
+# plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)
+plot_efflux_KD_2(paramB, KD_axis, cDc_vals)

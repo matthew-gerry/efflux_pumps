@@ -328,3 +328,19 @@ def efflux_MM_p_ind(param, KD, cDc, kp_const):
 
     J = pref*rev*cDc/(cDc + KM)
     return J
+
+
+def efflux_MM_2(param, KD, cDc):
+    ''' HAND-DERIVED EXPRESSION FOR THE EFFLUX RATE PREDICTED BY A PROTON-INDEPENDENT TWO STATE MODEL '''
+
+    # Effective affinity
+    KM = KD*(1 + (param.rt/param.rD)*(1/(1+param.vD*KD))*(1 + param.cDo/KD))
+
+    # Reversibility factor
+    rev = 1 - param.cDo/cDc
+
+    # prefactor  -just kt+ in this model
+    pref = param.rt*param.vD*KD/(1 + param.vD*KD)
+
+    J = pref*rev*cDc/(cDc + KM)
+    return J
