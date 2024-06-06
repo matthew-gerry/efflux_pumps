@@ -146,7 +146,7 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_M$ $(\mu M)$")
-    ax.text(0.13,69,"B",fontsize=16)
+    ax.text(0.17,69,"B",fontsize=16)
     # plt.legend()
     plt.show()
 
@@ -451,11 +451,11 @@ param_list = [param, paramA, paramB]
 
 # plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 # plot_efflux_vs_D(param, KD, Kp, V_base, kappa, cDc_axis, cpp_vals)
-# plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
+plot_KM(param, KD_vals_2, Kp, V_base, kappa, cpp_axis)
 # plot_specificity(param, KD, Kp, V_base_vals, kappa, cDc, cpp_axis)
 # plot_efflux_vs_D_2(param, KD_vals_2, Kp, V_base, kappa, cDc_axis_2, cpp)
 # plot_efflux_vs_D_over_KD(param, KD_vals_2, Kp, V_base, kappa, cDc_over_KD_axis, cpp)
 # contour_efflux_p_V(param, KD, Kp, V_abs_axis, kappa, cDc, cpp_axis_2, "efflux_p_V_data")
 # linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
 # plot_efflux_KD_p_ind(paramB, KD_axis, cDc_vals, kp_const)
-plot_efflux_KD_2(paramB, KD_axis, cDc_vals)
+# plot_efflux_KD_2(paramB, KD_axis, cDc_vals)

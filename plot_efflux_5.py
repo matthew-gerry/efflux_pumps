@@ -53,7 +53,7 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     plt.ylabel(r"$J\nu_D/k_D^+$")
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
     
-    plt.text(5e-3,7e-8,"A",fontsize=18)
+    plt.text(3e-2,7e-8,"A",fontsize=18)
     plt.legend()
     plt.show()
 
