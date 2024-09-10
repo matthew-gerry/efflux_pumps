@@ -1,7 +1,7 @@
 '''
 parameters.py
 
-Define the parameters for the three- and eight-state models of bacterial efflux pumps.
+Define the parameters for the three-, five-, and seven-state models of bacterial efflux pumps.
 Include only the parameters that remain constant between different plots (interaction volumes, characteristic rates, etc.).
 
 Matthew Gerry, March 2023

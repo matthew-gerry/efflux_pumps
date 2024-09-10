@@ -1,7 +1,7 @@
 '''
 rate_matrix.py
 
-Define the rate matrix for the efflux pump kinetic model (three- and eight-state).
+Define the rate matrices for all efflux pump kinetic models.
 
 Matthew Gerry, March 2023
 '''
