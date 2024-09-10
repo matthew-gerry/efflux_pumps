@@ -3,7 +3,7 @@ plot_efflux_3.py
 
 Plotting functions for the three-state model of bacterial efflux pumps.
 
-When calling functions, an object of the class Params3 should be passed to as 
+When calling functions, an object of the class Parameters should be passed to as 
 argument denoted param.
 
 Matthew Gerry, March 2023
@@ -254,12 +254,12 @@ cDc_vals = [1e-6, 5e-6, 1e-5]
 
 #### MAIN CALLS ####
 
-param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
-paramA = Params3(rD, rp, rt, cDoA, cpc, vD, vp)
-paramB = Params3(rD, rp, rt, cDoB, cpc, vD, vp)
+param = Parameters(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Parameters object
+paramA = Parameters(rD, rp, rt, cDoA, cpc, vD, vp)
+paramB = Parameters(rD, rp, rt, cDoB, cpc, vD, vp)
 param_list = [param, paramA, paramB]
 
-param_p_ind = Params3(rD, rp, rtB, cDoB, cpc, vD, vp)
+param_p_ind = Parameters(rD, rp, rtB, cDoB, cpc, vD, vp)
 
 plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
 plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)

@@ -2,7 +2,7 @@
 efflux_pumps.py
 
 All of the functions computing the efflux and related quantities for
-bacterial efflux pumps using the three- and eight-state model.
+bacterial efflux pumps using the three-, five-, and seven-state models
 
 Matthew Gerry, March 2023
 '''
@@ -124,66 +124,6 @@ def entropy_3(param, KD, Kp, V_base, kappa, cDc, cpp):
     return EPR
 
 
-#### FUNCTIONS: EIGHT-STATE MODEL ####
-
-def efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
-    ''' GET MEAN EFFLUX RATE BY NUMERICALLY SOLVING FOR THE STEADY STATE, 8-STATE MODEL '''
-    
-    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
-
-    # Find steady state solution as eigenvector of R
-    SS = rm.steady_state(R)
-    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] + SS[3]*R[4,3] - SS[4]*R[3,4] # Efflux at steady state
-
-    return efflux
-
-
-def var_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp, dchi):
-    ''' GET VARIANCE IN THE EFFLUX BY NUMERICALLY DIFFERENTIATING THE CGF, 8-STATE MODEL '''
-
-    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
-
-    # Do full counting statistics for the variance
-    CGF = rm.cgf_8(R, dchi, 1) # Set chisteps to 1 since we just need the variance
-    efflux_var = -np.diff(CGF, n=2)/(dchi**2) # Variance at steady state is given by the second derivative of the CGF wrt j*chi
-
-    return efflux_var
-
-
-def p_flux_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
-    ''' GET PROTON FLUX RATE THROUGH A METHOD SIMILAR TO efflux_numerical_8 '''
-
-    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
-
-    # Additional quantities needed
-    KG = get_derived_params(param, cpp, V_base, kappa)[2]
-    ktC = param.rt*param.vp_list[3]*Kp_list[3]*KG/(1 + param.vp_list[3]*Kp_list[3]*KG) # Rotation, cycle C
-
-    # Find steady state solution as eigenvector of R
-    SS = rm.steady_state(R)
-    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] + SS[3]*R[4,3] - SS[4]*R[3,4] # Efflux at steady state
-    p_flux = efflux + SS[7]*R[0,7] - SS[0]*R[7,0] + SS[5]*ktC - SS[4]*ktC*param.cpc/(Kp_list[3]*KG)
-
-    return p_flux
-
-
-def entropy_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp):
-    ''' ENTROPY PRODUCTION RATE OF THE THREE-STATE MODEL '''
-
-    R = rm.rate_matrix_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
-    SS = rm.steady_state(R)
-    SS = SS.reshape(8) # Flatten the steady state probability distribution
-
-    # Entropy production is a sum over force-flux contributions derived from the rate matrix
-    force = np.log(np.divide(R,np.transpose(R)))
-    flux = np.multiply(R, np.array(8*[SS]))
-
-    entropy_contributions = np.multiply(force, flux) # In units of kB
-    EPR = entropy_contributions.sum() # Sum over all contributions
-
-    return EPR
-
-
 #### FUNCTIONS: 5-STATE MODEL ####
 
 def efflux_numerical_5(param, KD, Kp, QD, Qp, V_base, kappa, cDc, cpp, reversed_unbinding=False):
@@ -220,35 +160,6 @@ def entropy_5(param, KD, Kp, KD_ratio, Qp, V_base, kappa, cDc, cpp):
     EPR = entropy_contributions.sum() # Sum over all contributions
 
     return EPR
-
-#### FUNCTIONS: 4-STATE MODEL ####
-
-def efflux_numerical_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
-    ''' GET MEAN EFFLUX RATE BY NUMERICALLY SOLVING FOR THE STEADY STATE, 4-STATE MODEL '''
-
-    R = rm.rate_matrix_4(param, KD, Kp_list, V_base, kappa, cDc, cpp)
-
-    # Find steady state solution as eigenvector of R
-    SS = rm.steady_state(R)
-    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
-
-    return efflux
-
-def p_flux_4(param, KD, Kp_list, V_base, kappa, cDc, cpp):
-    ''' GET PROTON FLUX RATE THROUGH A METHOD SIMILAR TO efflux_numerical_4 '''
-
-    R = rm.rate_matrix_4(param, KD, Kp_list, V_base, kappa, cDc, cpp)
-
-    # Additional quantities needed
-    KG = get_derived_params(param, cpp, V_base, kappa)[2]
-    ktB = param.rt*param.vp_list[1]*Kp_list[1]*KG/(1 + param.vp_list[1]*Kp_list[1]*KG) # Rotation, waste cycle
-
-    # Find steady state solution as eigenvector of R
-    SS = rm.steady_state(R)
-    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
-    p_flux = efflux + SS[3]*ktB - SS[0]*ktB*param.cpc/(Kp_list[1]*KG)
-
-    return p_flux
 
 
 #### FUNCTIONS: 7-STATE MODEL ####
@@ -301,34 +212,6 @@ def entropy_7(param, KD, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp):
 
 
 #### FUNCTIONS: PROTON-INDEPENDENT MODEL ####
-
-def efflux_numerical_p_ind(param, KD, cDc, kp_const):
-    ''' GET MEAN EFFLUX RATE BY SOLVING FOR THE STEADY-STATE NUMERICALLY, 3-STATE MODEL '''
-    R = rm.rate_matrix_p_ind(param, KD, cDc, kp_const)
-
-    # Find steady state solution as eigenvector of R associated with the zero eigenvalue
-    SS = rm.steady_state(R)
-    efflux = SS[2]*R[0,2] - SS[0]*R[2,0] # Efflux at steady state
-
-    return efflux
-
-def efflux_MM_p_ind(param, KD, cDc, kp_const):
-    ''' HAND-DERIVED EXPRESSION FOR THE EFFLUX RATE, ANALOGOUS TO THE ONE FOR THE STANDARD MODEL '''
-    
-    # Effective affinity
-    KM_num = KD*(param.rD*param.vD*KD*(kp_const + param.rt*(1 + param.cDo/KD)) + kp_const*(param.rD + param.rt*(1 + 2*param.cDo/KD)))
-    KM_denom = param.rD*param.vD*KD*param.rt + 2*kp_const*param.rD*(1 + param.vD*KD)
-    KM = KM_num/KM_denom
-
-    # Reversibility factor
-    rev = 1 - param.cDo/cDc
-
-    # Prefactor
-    pref = kp_const/(1 + 2*kp_const*(1 + param.vD*KD)/(param.rt*param.vD*KD))
-
-    J = pref*rev*cDc/(cDc + KM)
-    return J
-
 
 def efflux_MM_2(param, KD, cDc):
     ''' HAND-DERIVED EXPRESSION FOR THE EFFLUX RATE PREDICTED BY A PROTON-INDEPENDENT TWO STATE MODEL '''

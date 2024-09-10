@@ -2,8 +2,7 @@
 kd_at_jmax.py
 
 Efflux pumps project: code to numerically approximate the value of K_D
-at which the efflux curve is peaked, for the 3-state and 8-state 
-models.
+at which the efflux curve is peaked, for all kinetic models.
 
 Matthew Gerry, March 2023
 '''
@@ -378,9 +377,9 @@ filename_compare_7 = "J_compare_7"
 
 #### MAIN CALLS ####
 
-param3 = Params3(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Params3 class to use for 3-state model plots
-param5 = Params3(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
-param3B = Params3(rD, rp, rt3, cDoB, cpc, vD, vp) # 3-state param object with lower [D]_out for p-independent plotting
+param3 = Parameters(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Parameters class to use for 3-state model plots
+param5 = Parameters(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
+param3B = Parameters(rD, rp, rt3, cDoB, cpc, vD, vp) # 3-state param object with lower [D]_out for p-independent plotting
 
 plots_3state = False
 if plots_3state:

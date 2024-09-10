@@ -7,7 +7,7 @@ This includes functions to numerically estimate KM and, in turn, the specificity
 since we do not have analytic expressions for these quantities as we do for the
 three-state model. 
 
-When calling functions, an object of the class Params3 should be passed to as 
+When calling functions, an object of the class Parameters should be passed to as 
 argument denoted param.
 
 Matthew Gerry, August 2023
@@ -213,7 +213,7 @@ cpp_axis = np.logspace(-7,-5, 200)
 
 #### MAIN CALLS ####
 
-param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
+param = Parameters(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Parameters object
 
 plot_efflux_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)
 plot_efficiency_vs_KD(param, KD_axis, Kp_list, KD_ratio, Qp_list, V_base, kappa, cDc, cpp_vals)

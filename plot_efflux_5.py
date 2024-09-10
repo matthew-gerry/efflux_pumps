@@ -3,7 +3,7 @@ plot_efflux_5.py
 
 Plotting functions for the five-state model of bacterial efflux pumps.
 
-When calling functions, an object of the class Params3 should be passed to as 
+When calling functions, an object of the class Parameters should be passed to as 
 argument denoted param (three-state and five-state models share a Parameters class).
 
 Matthew Gerry, June 2023
@@ -84,5 +84,5 @@ cpp_vals = np.array([1e-7, 3e-7, 6e-7, 1e-6]) # M, cytoplasmic drug concentratio
 
 #### MAIN CALLS ####
 
-param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
+param = Parameters(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Parameters object
 plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc, cpp_vals, reversed_unbinding=True)
