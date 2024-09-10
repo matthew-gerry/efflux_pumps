@@ -251,6 +251,7 @@ cDoB = 1e-7
 # For plot_efflux_KD_p_ind
 cDc_vals = [1e-6, 5e-6, 1e-5]
 
+
 #### MAIN CALLS ####
 
 param = Params3(rD, rp, rt, cDo, cpc, vD, vp) # Create instantiation of Params3 object
