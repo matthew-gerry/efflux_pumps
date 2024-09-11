@@ -137,26 +137,6 @@ def efflux_matrix_p_ind(param, KD_axis, cDc_axis, kp_const):
     return efflux_vals
 
 
-
-def efflux_matrix_8(param, KD_axis, Kp_list, V_base, kappa, cDc_vals, cpp_axis):
-    ''' CALCULATE THE MATRIX OF EFFLUX VALUES WITH VARYING KD, CPP, EIGHT-STATE MODEL '''
-
-    efflux_vals = np.zeros([len(cpp_axis),len(KD_axis),len(cDc_vals)]) # Initialize matrix to store efflux vals
-
-    # Evaluate mean efflux at each KD-cpp pair, for each drug concentration
-    for j in range(len(cDc_vals)):
-        cDc = cDc_vals[j]
-
-        for i in range(len(cpp_axis)):
-            cpp = cpp_axis[i]
-
-            for k in range(len(KD_axis)): # Must write for-loop explicitly due to how KD_list is defined
-                KD_list = 2*[KD_axis[k]]
-
-                efflux_vals[i,k,j] = pump.efflux_numerical_8(param, KD_list, Kp_list, V_base, kappa, cDc, cpp)
-    
-    return efflux_vals
-
 #### FUNCTIONS: PLOTTING - EACH TAKES A DATASET AS AN ARGUMENT ####
 
 def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
@@ -191,6 +171,7 @@ def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
     ax.text(0.15,70,"B",fontsize=18)
     plt.legend(loc="lower right")
     plt.show()
+
 
 def plot_logwidth(filename, KD_axis, cpp_axis):
     ''' PLOT THE LOG WIDTH OF THE EFFLUX VS KD CURVE FOR ANY MODEL, GIVEN APPROPRIATE DATA '''
@@ -381,7 +362,9 @@ param3 = Parameters(rD, rp, rt3, cDo, cpc, vD, vp) # Create instantiation of Par
 param5 = Parameters(rD, rp, rt5, cDo, cpc, vD, vp) # And one for 5-state model plots
 param3B = Parameters(rD, rp, rt3, cDoB, cpc, vD, vp) # 3-state param object with lower [D]_out for p-independent plotting
 
-plots_3state = False
+
+# Plot the KD_at_Jmax, log-width, and contour plot for the three-state model
+plots_3state = True
 if plots_3state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
     data_exists = exists("../"+filename_map_3+".npy")
@@ -391,11 +374,12 @@ if plots_3state:
         np.save("../"+filename_map_3, J_map_3)
     
     plot_KD_at_Jmax(filename_map_3, KD_axis, cpp_axis)
-    plot_logwidth(filename_map_3, KD_axis, cpp_axis)
+    # plot_logwidth(filename_map_3, KD_axis, cpp_axis)
     # plot_contour(filename_map_3, KD_axis, cpp_axis, rD)
 
 
-plots_5state = False
+# Plot the KD_at_Jmax, log-width, and contour plot for the five-state model
+plots_5state = True
 if plots_5state:
     # Prepare data for 5-state model contour plot if necessary, then create plot
         
@@ -410,6 +394,7 @@ if plots_5state:
     plot_contour(filename_map_5, KD_axis, cpp_axis, rD)
 
 
+# Plot the numerically calculated width of the efflux vs. KD curve for a proton-independent channel
 plots_p_ind = False
 if plots_p_ind:
 
@@ -422,7 +407,8 @@ if plots_p_ind:
     plot_logwidth_p_ind(filename_map_p_ind, KD_axis_B, cDc_axis)
 
 
-plot_width_comparison = True
+# Plots to compare the widths of the efflux vs. KD curves associated with the different models
+plot_width_comparison = False
 if plot_width_comparison:
     # Prepare data for both models if necessary, then create plot
 
