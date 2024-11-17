@@ -102,6 +102,7 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
 
     for i in range(len(KD_vals)):
         ax.semilogx(1e6*cpp_axis, 1e6*KM_vals[i], label="$K_D =$ "+str(int(1e6*KD_vals[i]))+" $\mu M$", linestyle=ls_list[i], linewidth=3)
+        ax.hlines([1e6*KD_vals[i]], 0, 11, colors=lc_list[i], linestyles=ls_list[i], alpha=0.6)
     for i in range(len(KD_vals)):
         ax.semilogx(1e6*cpp_axis, 1e6*KMsimp_vals[i], '--', color="black",linewidth=1)
 
@@ -110,12 +111,12 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.set_xticks([0.1, 0.2, 0.5, 1, 2, 5, 10])
 
     ax.set_xlim([0.1,10])
-    ax.set_ylim([0,80])
+    ax.set_ylim([0,90])
 
     ax.ticklabel_format(style='plain') # No scientific notation
     ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
     ax.set_ylabel("$K_M$ $(\mu M)$")
-    ax.text(0.17,69,"B",fontsize=16)
+    ax.text(0.15,79,"B",fontsize=16)
     # plt.legend()
     plt.show()
 
@@ -206,7 +207,7 @@ def plot_efflux_KD_p_ind(param, KD_axis, cDc_vals):
 #### GLOBAL VARIABLES ####
 
 ls_list = [(0,(1,1)), "dashdot", "dashed", (0,(3,1,1,1,1,1))] # Linestyle list, for plotting
-
+lc_list = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'] # Line colour list, for plotting
 
 # Parameter values
 rD = 1e8 # 1/s
