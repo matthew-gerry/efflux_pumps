@@ -16,6 +16,7 @@ import matplotlib.ticker as mtick
 from parameters import *
 import efflux_pumps as pump
 
+plt.rcParams['figure.dpi'] = 150 # Improve default resolution of figures
 
 #### FUNCTIONS ####
 
@@ -158,7 +159,7 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
     # Plot mean values and variances side by side
     dmup_axis_plot = -np.flip(dmup_axis)/(kB*T)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(dpi=150)
     for i in range(len(param_list)):
         param = param_list[i]
         ax.plot(dmup_axis_plot, lr_efflux[i]/param.rD, label=r"$\bar{[D]} = "+str(round(1e6*param.cDo,1))+"\:\mu M$", linestyle = ls_list[i])
