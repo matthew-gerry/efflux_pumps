@@ -17,6 +17,7 @@ import matplotlib.ticker as mtick
 from parameters import *
 import efflux_pumps as pump
 
+plt.rcParams['figure.dpi'] = 300 # Improve default resolution of figures
 
 #### FUNCTIONS: GENERAL ####
 
@@ -166,11 +167,13 @@ def plot_KD_at_Jmax(filename, KD_axis, cpp_axis):
     ax.set_yticks([2, 5, 10, 20, 50])
 
     ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$")    
+    ax.tick_params(labelsize=12)
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$", fontsize=14)
+    ax.set_ylabel("$K_D$ at $J_{max}$ $(\mu M)$", fontsize=14)    
     ax.text(0.15,70,"B",fontsize=18)
-    plt.legend(loc="lower right")
+    plt.legend(loc="lower right", fontsize=14)
     plt.show()
+    # plt.savefig("KD_at_Jmax_3.png")
 
 
 def plot_logwidth(filename, KD_axis, cpp_axis):
@@ -303,14 +306,15 @@ def plot_contour(filename, KD_axis, cpp_axis, rD):
     # ax.set_xlim(min(KD_micro),max(KD_micro))
     ax.set_xlim(5e-2, 1e4)
     ax.set_ylim(min(cpp_micro),max(cpp_micro))
-    ax.set_xlabel("$K_D\;(\mu M)$")
-    ax.set_ylabel("$[p]_{per}\;(\mu M)$")
+    ax.set_xlabel("$K_D\;(\mu M)$", fontsize=14)
+    ax.set_ylabel("$[p]_{per}\;(\mu M)$", fontsize=14)
+    ax.tick_params(labelsize=12)
 
     ax.text(1.8e-1,5.7,'B',fontsize=18,color='w')
     cbar.ax.set_ylabel(r"$J\nu_D/k_D^+$")
 
     plt.show()
-
+    # plt.savefig("contour_5.png")
 
 #### GLOBAL VARIABLES ####
 

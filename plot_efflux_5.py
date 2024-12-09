@@ -16,6 +16,7 @@ import matplotlib.ticker as mtick
 from parameters import *
 import efflux_pumps as pump
 
+plt.rcParams['figure.dpi'] = 300 # Improve default resolution of figures
 
 #### FUNCTIONS ####
 
@@ -44,14 +45,15 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, KD_ratio, Kp_ratio, V_base, kappa, cDc
     plt.xlim([min(KD_axis_uM), max(KD_axis_uM)])
     plt.ylim([0, 8.1e-8])
     
-    plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel(r"$J\nu_D/k_D^+$")
+    plt.xlabel("$K_D\:(\mu M)$", fontsize=14)
+    plt.ylabel(r"$J\nu_D/k_D^+$", fontsize=14)
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    
-    plt.text(3e-2,7e-8,"A",fontsize=18)
-    plt.legend()
-    plt.show()
+    plt.tick_params(labelsize=12)
 
+    plt.text(3e-2,7e-8,"A",fontsize=18)
+    plt.legend(fontsize=14)
+    plt.show()
+    # plt.savefig("efflux_vs_KD_5.png")
 
 #### GLOBAL VARIABLES ####
 

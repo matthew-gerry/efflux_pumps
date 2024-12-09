@@ -16,7 +16,7 @@ import matplotlib.ticker as mtick
 from parameters import *
 import efflux_pumps as pump
 
-plt.rcParams['figure.dpi'] = 150 # Improve default resolution of figures
+plt.rcParams['figure.dpi'] = 300 # Improve default resolution of figures
 
 #### FUNCTIONS ####
 
@@ -41,12 +41,14 @@ def plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals):
         plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[p]_{per} = "+str(round(cpp_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
     plt.ylim(0, 1.3e-7)
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
-    plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel(r"$J\nu_D/k_D^+$")
+    plt.xlabel("$K_D\:(\mu M)$", fontsize=14)
+    plt.ylabel(r"$J\nu_D/k_D^+$", fontsize=14)
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    plt.legend()
+    plt.tick_params(labelsize=12)
+    plt.legend(fontsize=14)
     plt.text(10**(-2),1.15e-7,"A",fontsize=18)
     plt.show()
+    # plt.savefig("efflux_vs_KD_3.png")
 
 
 def plot_efflux_vs_D(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
@@ -69,17 +71,19 @@ def plot_efflux_vs_D(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp):
     fig, ax = plt.subplots()
     for i in range(len(KD_vals)):
         ax.semilogy(cDc_axis_uM, mean_efflux[i]/param.rD,label="$K_D = "+str(int(KD_vals_uM[i]))+"\:\mu M$", linestyle = ls_list[i])
-    ax.set_xlabel("$[D]_{in}\:(\mu M)$")
-    ax.set_ylabel(r"$J\nu_D/k_D^+$")
+    ax.set_xlabel("$[D]_{in}\:(\mu M)$", fontsize=14)
+    ax.set_ylabel(r"$J\nu_D/k_D^+$", fontsize=14)
     ax.yaxis.set_major_formatter(mtick.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
+    ax.tick_params(labelsize=12)
     ax.set_yticks([1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7, 2e-7, 5e-7])
     ax.set_xlim([0,150])
     ax.annotate("Stronger binding",xy=(20,1.5e-5), xytext=(20, 1.5e-6),
             horizontalalignment='center', arrowprops=dict(arrowstyle='simple',lw=2))    
-    ax.text(15,2.25e-7,"A",fontsize=16)
-    ax.legend()
+    ax.text(15,2.25e-7,"A",fontsize=18)
+    ax.legend(fontsize=14)
     plt.show()
+    # plt.savefig("efflux_vs_D_3.png")
 
 
 def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
@@ -115,11 +119,13 @@ def plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis):
     ax.set_ylim([0,90])
 
     ax.ticklabel_format(style='plain') # No scientific notation
-    ax.set_xlabel("$[p]_{per}$ $(\mu M)$")
-    ax.set_ylabel("$K_M$ $(\mu M)$")
-    ax.text(0.15,79,"B",fontsize=16)
+    ax.tick_params(labelsize=12)
+    ax.set_xlabel("$[p]_{per}$ $(\mu M)$", fontsize=14)
+    ax.set_ylabel("$K_M$ $(\mu M)$", fontsize=14)
+    ax.text(0.15,79,"B",fontsize=18)
     # plt.legend()
     plt.show()
+    # plt.savefig("KM_vs_p_3.png")
 
 
 def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
@@ -159,7 +165,7 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
     # Plot mean values and variances side by side
     dmup_axis_plot = -np.flip(dmup_axis)/(kB*T)
 
-    fig, ax = plt.subplots(dpi=150)
+    fig, ax = plt.subplots()
     for i in range(len(param_list)):
         param = param_list[i]
         ax.plot(dmup_axis_plot, lr_efflux[i]/param.rD, label=r"$\bar{[D]} = "+str(round(1e6*param.cDo,1))+"\:\mu M$", linestyle = ls_list[i])
@@ -167,16 +173,17 @@ def linear_response_check(param_list, KD, Kp, V_base, kappa, dmuD, dmup_axis):
     ax.set_xlim([0, max(dmup_axis_plot)])
     # ax.set_ylim([0,6.5e-4])
     # ax.set_xlabel("$\ln([p]_{per}/[p]_{cyt})$")
-    ax.set_xlabel("$-\Delta\mu_p/k_BT$")
-    ax.set_ylabel(r"$J\nu_D/k_D^+$")
+    ax.set_xlabel("$-\Delta\mu_p/k_BT$", fontsize=14)
+    ax.set_ylabel(r"$J\nu_D/k_D^+$", fontsize=14)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    ax.legend()
+    ax.tick_params(labelsize=12)
+    ax.legend(fontsize=14)
     plt.show()
+    # plt.savefig("efflux_lr.png")
 
 
 def plot_efflux_KD_p_ind(param, KD_axis, cDc_vals):
     ''' EFFLUX CURVE FOR THE EVEN SIMPLER, PROTON-INDEPENDENT TWO-STATE MODEL '''
-
 
     mean_efflux = []
 
@@ -197,11 +204,13 @@ def plot_efflux_KD_p_ind(param, KD_axis, cDc_vals):
         plt.semilogx(KD_axis_uM, mean_efflux[i]/param.rD, label="$[D]_{in} = "+str(round(cDc_vals_uM[i],1))+"\:\mu M$", linestyle = ls_list[i])
 
     plt.xlim(min(KD_axis_uM),max(KD_axis_uM))
-    plt.xlabel("$K_D\:(\mu M)$")
-    plt.ylabel(r"$J\nu_D/k_D^+$")
+    plt.xlabel("$K_D\:(\mu M)$", fontsize=14)
+    plt.ylabel(r"$J\nu_D/k_D^+$", fontsize=14)
     plt.ticklabel_format(axis='y', style='scientific', scilimits=(0,0), useMathText=True)
-    plt.legend()
+    plt.tick_params(labelsize=12)
+    plt.legend(fontsize=14)
     plt.show()
+    # plt.savefig("efflux_vs_KD_p_ind.png")
 
 
 
@@ -264,7 +273,7 @@ param_list = [param, paramA, paramB]
 param_p_ind = Parameters(rD, rp, rtB, cDoB, cpc, vD, vp)
 
 plot_efflux_vs_KD(param, KD_axis, Kp, V_base, kappa, cDc, cpp_vals)
-plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
 plot_efflux_vs_D(param, KD_vals, Kp, V_base, kappa, cDc_axis, cpp)
+plot_KM(param, KD_vals, Kp, V_base, kappa, cpp_axis)
 linear_response_check(param_list, KD, Kp, V_base_lr, kappa, dmuD, dmup_axis_lr)
 plot_efflux_KD_p_ind(param_p_ind, KD_axis, cDc_vals)
